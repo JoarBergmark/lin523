@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import evaluate
 import os
-def train_model(dataset_path="../data/datasets/", savepath="../models", set_no):
+def train_model(set_no, dataset_path="../data/datasets/", savepath="../models"):
     """Loads a model, defines training parameters and datasets.
     Args:
         savepath: directory to save trained model
