@@ -1,11 +1,10 @@
 import datasets
-from datasets import load_dataset
-from datasets import Dataset
+from datasets import Dataset, load_dataset, Features, ClassLabel
 import glob
 import os
 import pandas as pd
 
-def dataload(path, savepath, set_no):
+def dataset_builder(path, savepath, set_no):
     """Loads data from .tsv-file and saves a DatasetDict object with the
     specified set of essays.
     Args:
@@ -47,10 +46,46 @@ def data_from_csv(filename, set_no):
     if "domain1_score" in df.columns:
         df = df[["essay", "domain1_score"]]
         df = df.rename(columns={"essay": "sequence", "domain1_score": "labels"})
+    elif "valid_set" in filename:
+        # Open validation set scores from same path
+        score_file = (filename[:-len("valid_set.tsv")] +
+                "valid_sample_submission_2_column.csv")
+        df2 = pd.read_csv(score_file, sep=",")
+        df2 = df2.rename(columns={"prediction_id": "essay_id",
+            "predicted_score": "labels"}
+            )
+        df = pd.merge(df, df2[["essay_id", "labels"]], on="essay_id")
+        df = df[["essay", "labels"]]
+        df = df.rename(columns={"essay": "sequence"})
     else:
         df = df[["essay"]]
         df = df.rename(columns={"essay": "sequence"})
-            
+        df = df.assign(labels = -1)
+
     current_data = Dataset.from_pandas(df).remove_columns(["__index_level_0__"])
+    # Makes a ClassLabel object with info about the labels, relative to set_no
+    set_info = {
+            1: range(2, 13),
+            2: range(1, 7),
+            3: range(0, 4),
+            4: range(0, 4),
+            5: range(0, 5),
+            6: range(0, 5),
+            7: range(0, 31),
+            8: range(0, 61)
+            }
+    this_set = set_info[set_no]
+    current_data = current_data.cast_column("labels",
+            ClassLabel(
+                num_classes=len(this_set),
+                names=list(map(str, this_set))
+                )
+            )
+
+    print(current_data.features)
+    #sample = current_data.shuffle()
+    #print(sample[:3])
+    #print(sample.features)
     return current_data
+
 
