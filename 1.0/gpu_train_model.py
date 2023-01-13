@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import evaluate
 import os
+from pynvml
 def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
@@ -37,6 +38,17 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, refrences=labels)    
 
+    def print_gpu_utilization():
+        nvmlInit()
+        handle = nvmlDeviceGetHandleByIndex(0)
+        info = nvmlDeviceGetMemoryInfo(handle)
+        print(f"GPU memory occupied: {info.used//1024**2} MB.")
+    
+    def print_summary(result):
+        print(f"Time: {result.metrics['train_runtime']:.2f}")
+        print(f"Samples/second: {result.metrics['train_samples_per_second']:.2f}")
+        print_gpu_utilization())
+
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
     #Tokenized dataset features:
     #    sequence: Value(string)
@@ -55,7 +67,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     model = AutoModelForSequenceClassification.from_pretrained(
             checkpoint,
             num_labels=(dataset["train"].features["labels"].num_classes)
-            )
+            ).to("cuda")
+    print_gpu_utilization()
     
     trainer = Trainer(
             model,
