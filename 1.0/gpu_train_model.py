@@ -47,7 +47,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     def print_summary(result):
         print(f"Time: {result.metrics['train_runtime']:.2f}")
         print(f"Samples/second: {result.metrics['train_samples_per_second']:.2f}")
-        print_gpu_utilization())
+        print_gpu_utilization()
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
     #Tokenized dataset features:
@@ -86,6 +86,6 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     #preds = np.argmax(predictions.predictions, axis=-1)
     
     print("Training starts here!")
-    #trainer.train()
+    trainer.train()
 
 

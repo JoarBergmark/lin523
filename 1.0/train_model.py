@@ -73,6 +73,6 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     #preds = np.argmax(predictions.predictions, axis=-1)
     
     print("Training starts here!")
-    #trainer.train()
+    trainer.train()
 
 
