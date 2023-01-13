@@ -1,24 +1,26 @@
 from load_model import load_pretrained
 from dataset_builder import dataset_builder
-from datasets import load_dataset
+from datasets import load_from_disk
 from transformers import AutoTokenizer, DataCollatorWithPadding, TrainingArguments, AutoModelForSequenceClassification, Trainer
 import numpy as np
 import pandas as pd
 import evaluate
 import os
-def train_model(set_no, dataset_path="../data/datasets/", savepath="../models"):
+def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
         savepath: directory to save trained model
         set_no: essay set for model
     """
-    
-    if os.path.exists(dataset_path):
-        dataset = load_dataset(dataset_path + str(set_no))
+    filename = dataset_path + str(set_no) + ".data"
+    print("Loading " + filename)
+    print("Filepath found: " + str(os.path.exists(filename)))
+    if os.path.exists(filename):
+        dataset = load_from_disk(filename)
         print("Dataset loaded!")
     else:
-        dataset_builder("../data/", dataset_path, set_no)
-        dataset = load_dataset(dataset_path + str(set_no))
+        dataset_builder(set_no)
+        dataset = load_from_disk(filename)
         print("Dataset created and loaded")
 
     # Load pretrained model and tokenizer
@@ -38,7 +40,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models"):
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-
+    
+    savefile = savepath + str(set_no) + ".model"
     training_args = TrainingArguments(
             savepath,
             evaluation_strategy="epoch"
@@ -46,7 +49,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models"):
 
     model = AutoModelForSequenceClassification.from_pretrained(
             checkpoint,
-            num_labels=(dataset.features["labels"]["num_classes"])
+            num_labels=(dataset["train"].features["labels"].num_classes)
             )
     
     trainer = Trainer(
@@ -63,7 +66,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models"):
     #predictions = trainer.predict(tokenized_dataset["validation"])
         # highest prediction of each validation set essay
     #preds = np.argmax(predictions.predictions, axis=-1)
-
+    
+    print("Training starts here!")
     trainer.train()
 
 
