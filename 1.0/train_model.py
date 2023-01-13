@@ -39,6 +39,12 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         return metric.compute(predictions=predictions, refrences=labels)    
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
+    #Tokenized dataset features:
+    #    sequence: Value(string)
+    #    labels: ClassLabel
+    #    input_ids: Sequence(Value)
+    #    token_type_ids: Sequence(Value)
+    #    attention_mask: Sequence(Value)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     
     savefile = savepath + str(set_no) + ".model"
@@ -68,6 +74,6 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     #preds = np.argmax(predictions.predictions, axis=-1)
     
     print("Training starts here!")
-    trainer.train()
+    #trainer.train()
 
 
