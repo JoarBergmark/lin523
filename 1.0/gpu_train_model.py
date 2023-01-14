@@ -1,12 +1,13 @@
 from dataset_builder import dataset_builder
 from datasets import load_from_disk
-from transformers import AutoTokenizer, DataCollatorWithPadding, TrainingArguments, AutoModelForSequenceClassification, Trainer
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, TrainingArguments, Trainer
 import numpy as np
 import pandas as pd
 import evaluate
 import os
 from pynvml import *
 import torch
+from koila import LazyTensor, lazy
 def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
@@ -63,14 +64,17 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     training_args = TrainingArguments(
             savepath,
             evaluation_strategy="epoch",
-            per_device_train_batch_size=8,
-            per_device_eval_batch_size=8,
+            gradient_accumulation_steps=4,
+            per_device_train_batch_size=4,
+            per_device_eval_batch_size=4,
             )
-
+    print("GPU memory before model: ")
+    print_gpu_utilization()
     model = AutoModelForSequenceClassification.from_pretrained(
             checkpoint,
             num_labels=(dataset["train"].features["labels"].num_classes)
             ).to("cuda")
+    print("GPU memory with loaded model: ")
     print_gpu_utilization()
     
     trainer = Trainer(
@@ -89,6 +93,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     #preds = np.argmax(predictions.predictions, axis=-1)
     
     print("Training starts here!")
-    trainer.train()
-
+    print("GPU memory at start: ")
+    print_gpu_utilization()
+    result = trainer.train()
+    print_summary(result)
 
