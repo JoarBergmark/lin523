@@ -6,6 +6,7 @@ import pandas as pd
 import evaluate
 import os
 from pynvml import *
+import torch
 def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
@@ -61,7 +62,9 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     savefile = savepath + str(set_no) + ".model"
     training_args = TrainingArguments(
             savepath,
-            evaluation_strategy="epoch"
+            evaluation_strategy="epoch",
+            per_device_train_batch_size=4,
+            per_device_eval_batch_size=4,
             )
 
     model = AutoModelForSequenceClassification.from_pretrained(
