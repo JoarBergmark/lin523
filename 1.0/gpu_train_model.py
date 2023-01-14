@@ -64,8 +64,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             savepath,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
-            per_device_train_batch_size=4,
-            per_device_eval_batch_size=4,
+            per_device_train_batch_size=2,
+            per_device_eval_batch_size=2,
             )
     print("GPU memory before model: ")
     print_gpu_utilization()
