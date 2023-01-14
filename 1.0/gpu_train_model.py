@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import evaluate
 import os
-from pynvml
+from pynvml import *
 def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
