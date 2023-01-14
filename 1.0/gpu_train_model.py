@@ -63,8 +63,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     training_args = TrainingArguments(
             savepath,
             evaluation_strategy="epoch",
-            per_device_train_batch_size=4,
-            per_device_eval_batch_size=4,
+            per_device_train_batch_size=8,
+            per_device_eval_batch_size=8,
             )
 
     model = AutoModelForSequenceClassification.from_pretrained(
