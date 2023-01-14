@@ -7,7 +7,6 @@ import evaluate
 import os
 from pynvml import *
 import torch
-from koila import LazyTensor, lazy
 def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
