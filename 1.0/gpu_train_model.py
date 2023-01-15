@@ -1,6 +1,6 @@
 from dataset_builder import dataset_builder
 from datasets import load_from_disk
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, TrainingArguments, Trainer
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, TrainingArguments, Trainer, AdamW
 import numpy as np
 import pandas as pd
 import evaluate
@@ -76,11 +76,10 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     print("GPU memory with loaded model: ")
     print_gpu_utilization()
     
-    optimizer = torch.optim.Adam(model.parameters())
     trainer = Trainer(
             model,
             training_args,
-            optimizers=optimizer,
+            optimizers=create_optimizer_and_scheduler(),
             train_dataset=tokenized_dataset["train"],
             eval_dataset=tokenized_dataset["validation"],
             data_collator=data_collator, # denna rad behövs inte för detta
