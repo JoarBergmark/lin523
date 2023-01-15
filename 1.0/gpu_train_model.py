@@ -1,6 +1,6 @@
 from dataset_builder import dataset_builder
 from datasets import load_from_disk
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, TrainingArguments, Trainer, AdamW
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, TrainingArguments, Trainer, AdamW, get_scheduler
 import numpy as np
 import pandas as pd
 import evaluate
@@ -76,17 +76,29 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     print("GPU memory with loaded model: ")
     print_gpu_utilization()
     
+    #optimizer = AdamW(model.paramters(), lr=5e-5)
+    #num_training_steps = num_epochs * len(train_dataloader)
+    #scheduler = get_scheduler(
+    #        "linear",
+    #        optimizer=optimizer,
+    #        num_warmup_steps=0,
+    #        num_training_steps=num_training_steps
+    #        )
+    
     trainer = Trainer(
             model,
             training_args,
-            optimizers=create_optimizer_and_scheduler(),
+            #optimizers=create_optimizer_and_scheduler(),
             train_dataset=tokenized_dataset["train"],
             eval_dataset=tokenized_dataset["validation"],
             data_collator=data_collator, # denna rad behövs inte för detta
             tokenizer=tokenizer,
             compute_metrics=compute_metrics
             )
-    
+    print("Optimizer: ")
+    print(trainer.optimizers)
+    quit()
+
     print("Training starts here!")
     print("GPU memory at start: ")
     print_gpu_utilization()
