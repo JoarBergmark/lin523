@@ -62,12 +62,14 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     savefile = savepath + save_name
     training_args = TrainingArguments(
             savepath,
-            num_train_epochs=5,
+            num_train_epochs=10,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
             per_device_train_batch_size=2,
             per_device_eval_batch_size=2,
             )
+    print("GPU memory before clear: ")
+    torch.cuda.empty_cache()
     print("GPU memory before model: ")
     print_gpu_utilization()
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -89,7 +91,6 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     trainer = Trainer(
             model,
             training_args,
-            #optimizers=create_optimizer_and_scheduler(),
             train_dataset=tokenized_dataset["train"],
             eval_dataset=tokenized_dataset["validation"],
             data_collator=data_collator, # denna rad behövs inte för detta
@@ -97,7 +98,9 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
             compute_metrics=compute_metrics
             )
     #dataloader = trainer.get_train_dataloader()
-    #trainer.create_optimizer_and_scheduler(3 * len(dataloader))
+    #trainer.create_optimizer_and_scheduler(
+    #    training_args["num_train_epochs"] * len(dataloader)
+    #    )
     #print("Trainer got optimizer.")
     #quit()
 
