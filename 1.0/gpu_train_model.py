@@ -43,7 +43,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         print(labels)
 
         # Old code that gets me NoneType error
-        #predictions = np.argmax(logits, axis=-1)
+        predictions = np.argmax(logits, axis=-1)
         #return metric.compute(predictions=predictions, refrences=labels)    
         
         # If model returns more than the preiction logits
@@ -51,9 +51,6 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             print("*************IT WAS AN INSTANCE OF LOGITS, TUPLE!***************")
             quit()
             logits = logits[0]
-
-        print("quiting without the tuple")
-        quit()
 
         decoded_logits = tokenizer.batch_decode(logits, skip_special_tokens=True)
         # Replace "-100" in labels since they cant decode
@@ -64,8 +61,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         decoded_logits = [logit.strip() for logit in decoded_logits]
         decoded_labels = [[label.strip()] for label in decoded_labels]
 
-        return metric.compute(predictions=decoded_logits,
-                refrences=decoded_labels)
+        return metric.compute(predictions=predictions, refrences=decoded_labels)
         
 
     def print_gpu_utilization():
