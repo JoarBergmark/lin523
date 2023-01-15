@@ -8,7 +8,6 @@ import os
 from pynvml import *
 import torch
 import sklearn
-from numba import cuda
 def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
@@ -66,14 +65,10 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
             num_train_epochs=3,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
-            per_device_train_batch_size=2,
-            per_device_eval_batch_size=2,
+            per_device_train_batch_size=4,
+            per_device_eval_batch_size=4,
             )
-    print("GPU memory before clear: ")
     torch.cuda.empty_cache()
-    device = cuda.get_current_device()
-    device.reset()
-    print_gpu_utilization()
     print("GPU memory before model: ")
     print_gpu_utilization()
     model = AutoModelForSequenceClassification.from_pretrained(
