@@ -35,12 +35,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
 
     def compute_metrics(eval_preds):
         metric = evaluate.load("accuracy", "precision")
-            # labels borde vara "orden" som motsvarar kategorier
         logits, labels = eval_preds
-
-        #print(logits)
-        #print(labels)
-
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, references=labels)    
 
@@ -81,8 +76,10 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     print("GPU memory with loaded model: ")
     print_gpu_utilization()
     
+    optimizer = torch.optim.Adam(model.parameters())
     trainer = Trainer(
             model,
+            optimizer=optimizer,
             training_args,
             train_dataset=tokenized_dataset["train"],
             eval_dataset=tokenized_dataset["validation"],
@@ -90,15 +87,11 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             tokenizer=tokenizer,
             compute_metrics=compute_metrics
             )
-    #Detta är nog redan inbyggt i compute_metrics()
-        # predictions of validation set
-    #predictions = trainer.predict(tokenized_dataset["validation"])
-        # highest prediction of each validation set essay
-    #preds = np.argmax(predictions.predictions, axis=-1)
     
     print("Training starts here!")
     print("GPU memory at start: ")
     print_gpu_utilization()
     result = trainer.train()
     print_summary(result)
+    trainer.save_model(savefile)
 
