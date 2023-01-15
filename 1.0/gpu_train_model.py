@@ -8,6 +8,7 @@ import os
 from pynvml import *
 import torch
 import sklearn
+from nuba import cuda
 def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
@@ -18,7 +19,7 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     print("Loading " + filename)
     print("Filepath found: " + str(os.path.exists(filename)))
     if os.path.exists(filename):
-        dataset = load_from_disk(filename)
+          dataset = load_from_disk(filename)
         print("Dataset loaded!")
     else:
         dataset_builder(set_no)
@@ -62,7 +63,7 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     savefile = savepath + save_name
     training_args = TrainingArguments(
             savepath,
-            num_train_epochs=10,
+            num_train_epochs=3,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
             per_device_train_batch_size=2,
@@ -70,6 +71,9 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
             )
     print("GPU memory before clear: ")
     torch.cuda.empty_cache()
+    device = cuda.get_current_device()
+    device.reset()
+    print_gpu_utilization()
     print("GPU memory before model: ")
     print_gpu_utilization()
     model = AutoModelForSequenceClassification.from_pretrained(
