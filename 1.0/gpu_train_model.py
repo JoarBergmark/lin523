@@ -80,7 +80,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     trainer = Trainer(
             model,
             training_args,
-            optimizer=optimizer,
+            optimizers=optimizer,
             train_dataset=tokenized_dataset["train"],
             eval_dataset=tokenized_dataset["validation"],
             data_collator=data_collator, # denna rad behövs inte för detta
