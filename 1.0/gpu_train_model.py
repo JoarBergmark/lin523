@@ -8,7 +8,7 @@ import os
 from pynvml import *
 import torch
 import sklearn
-from nuba import cuda
+from numba import cuda
 def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
