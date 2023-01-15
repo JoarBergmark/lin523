@@ -19,7 +19,7 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     print("Loading " + filename)
     print("Filepath found: " + str(os.path.exists(filename)))
     if os.path.exists(filename):
-          dataset = load_from_disk(filename)
+        dataset = load_from_disk(filename)
         print("Dataset loaded!")
     else:
         dataset_builder(set_no)
