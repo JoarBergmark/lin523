@@ -59,7 +59,11 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         # Post-proccesing
         #decoded_logits = [logit.strip() for logit in decoded_logits]
         decoded_labels = [[label.strip()] for label in decoded_labels]
-
+        print("predictions: ")
+        print(predictions)
+        print("decoded_labels: ")
+        print(decoded_labels)
+        quit()
         return metric.compute(predictions=predictions, refrences=decoded_labels)
         
 
