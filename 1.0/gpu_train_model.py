@@ -44,6 +44,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         
         # If model returns more than the preiction logits
         if isinstance(logits, tuple):
+            print("*************IT WAS AN INSTANCE OF LOGITS, TUPLE!***************")
             logits = logits[0]
         decoded_logits = tokenizer.batch_decode(logits, skip_special_tokens=True)
         # Replace "-100" in labels since they cant decode
