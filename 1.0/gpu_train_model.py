@@ -8,7 +8,7 @@ import os
 from pynvml import *
 import torch
 import sklearn
-def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/"):
+def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath="../models/"):
     """Loads a model, defines training parameters and datasets.
     Args:
         savepath: directory to save trained model
@@ -34,7 +34,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         return tokenizer(essay["sequence"], truncation=True)
 
     def compute_metrics(eval_preds):
-        metric = evaluate.load("accuracy", "precision")
+        metric = evaluate.load("accuracy")#, "precision")
         logits, labels = eval_preds
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, references=labels)    
@@ -59,9 +59,10 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     #    attention_mask: Sequence(Value)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     
-    savefile = savepath + str(set_no) + ".model"
+    savefile = savepath + save_name
     training_args = TrainingArguments(
             savepath,
+            num_train_epochs=5,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
             per_device_train_batch_size=2,
@@ -95,8 +96,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             tokenizer=tokenizer,
             compute_metrics=compute_metrics
             )
-    dataloader = trainer.get_train_dataloader()
-    trainer.create_optimizer_and_scheduler(3 * len(dataloader))
+    #dataloader = trainer.get_train_dataloader()
+    #trainer.create_optimizer_and_scheduler(3 * len(dataloader))
     #print("Trainer got optimizer.")
     #quit()
 
