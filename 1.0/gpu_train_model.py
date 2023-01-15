@@ -79,8 +79,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
     optimizer = torch.optim.Adam(model.parameters())
     trainer = Trainer(
             model,
-            optimizer=optimizer,
             training_args,
+            optimizer=optimizer,
             train_dataset=tokenized_dataset["train"],
             eval_dataset=tokenized_dataset["validation"],
             data_collator=data_collator, # denna rad behövs inte för detta
