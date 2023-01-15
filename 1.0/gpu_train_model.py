@@ -95,8 +95,8 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             tokenizer=tokenizer,
             compute_metrics=compute_metrics
             )
-    print("Optimizer: ")
-    print(trainer.optimizers)
+    trainer.create_optimizer_and_scheduler(len(trainer.get_train_dataloader))
+    print("Trainer got optimizer.")
     quit()
 
     print("Training starts here!")
