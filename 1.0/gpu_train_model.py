@@ -38,6 +38,10 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             # labels borde vara "orden" som motsvarar kategorier
         logits, labels = eval_preds
 
+        print(eval_preds)
+        print(logits)
+        print(labels)
+
         # Old code that gets me NoneType error
         #predictions = np.argmax(logits, axis=-1)
         #return metric.compute(predictions=predictions, refrences=labels)    
@@ -45,6 +49,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         # If model returns more than the preiction logits
         if isinstance(logits, tuple):
             print("*************IT WAS AN INSTANCE OF LOGITS, TUPLE!***************")
+            quit()
             logits = logits[0]
         decoded_logits = tokenizer.batch_decode(logits, skip_special_tokens=True)
         # Replace "-100" in labels since they cant decode
