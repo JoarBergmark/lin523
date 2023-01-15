@@ -38,12 +38,11 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             # labels borde vara "orden" som motsvarar kategorier
         logits, labels = eval_preds
 
-        print(eval_preds)
         print(logits)
         print(labels)
 
         # Old code that gets me NoneType error
-        predictions = np.argmax(logits, axis=-1)
+        #predictions = np.argmax(logits, axis=-1)
         #return metric.compute(predictions=predictions, refrences=labels)    
         
         # If model returns more than the preiction logits
@@ -54,14 +53,14 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
 
         decoded_logits = tokenizer.batch_decode(logits, skip_special_tokens=True)
         # Replace "-100" in labels since they cant decode
-        labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
-        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+        #labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+        #decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
         # Post-proccesing
         decoded_logits = [logit.strip() for logit in decoded_logits]
-        decoded_labels = [[label.strip()] for label in decoded_labels]
+        # decoded_labels = [[label.strip()] for label in decoded_labels]
 
-        return metric.compute(predictions=predictions, refrences=decoded_labels)
+        return metric.compute(predictions=decoded_logits, refrences=labels)
         
 
     def print_gpu_utilization():
