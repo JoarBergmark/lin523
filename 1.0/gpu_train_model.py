@@ -65,8 +65,8 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
             num_train_epochs=3,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
-            per_device_train_batch_size=4,
-            per_device_eval_batch_size=4,
+            per_device_train_batch_size=2,
+            per_device_eval_batch_size=2,
             )
     torch.cuda.empty_cache()
     print("GPU memory before model: ")
@@ -109,4 +109,8 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     result = trainer.train()
     print_summary(result)
     trainer.save_model(savefile)
+
+    print("Model trained, results for test split: ")
+    trainer.predict(tokenized_dataset["test"])
+
 
