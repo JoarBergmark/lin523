@@ -51,6 +51,10 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
             print("*************IT WAS AN INSTANCE OF LOGITS, TUPLE!***************")
             quit()
             logits = logits[0]
+
+        print("quiting without the tuple")
+        quit()
+
         decoded_logits = tokenizer.batch_decode(logits, skip_special_tokens=True)
         # Replace "-100" in labels since they cant decode
         labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
