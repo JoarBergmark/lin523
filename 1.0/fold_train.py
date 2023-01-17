@@ -1,7 +1,7 @@
 from gpu_train_model import train_model
 from dataset_builder import dataset_builder
 from datasets import load_from_disk
-from transformers import from_pretrained
+
 def train(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         savepath="../models/", overwrite=False, epochs=3):
     """Trains multiple models for cross fold validation, print and saves results.
