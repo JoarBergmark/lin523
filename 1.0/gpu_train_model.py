@@ -51,6 +51,11 @@ def train_model(dataset, savepath, n_epochs=3):
         print_gpu_utilization()
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
+    tokenized_dataset = tokenized_dataset.remove_comoumns(["text", "idx"])
+    print("tokenized_datasets column names: ")
+    print(tokenized_datasets["train"].column_names)
+    print("tokenized_datasets features: ")
+    print(tokenized_datasets["train"].features)
     #Tokenized dataset features:
     #    text: Value(string)
     #    labels: ClassLabel

@@ -18,13 +18,21 @@ def dataset_builder(set_no, path="../data/training_set_rel3.tsv",
     set_dataset = data_from_csv(set_no, path)
     set_dataset.shuffle()
     print("Data loaded")
-    
-    kfolds = create_folds(set_dataset)
-    for num, folds in enumerate(kfolds):
-        save_dir = savepath + "set" + str(set_no) + "/fold" + str(num) + ".data"
-        folds.save_to_disk(save_dir)
+    if folded > 1: 
+        kfolds = create_folds(set_dataset)
+        for num, folds in enumerate(kfolds):
+            save_dir = savepath + "set" + str(set_no) + "/fold" + str(num) + ".data"
+            folds.save_to_disk(save_dir)
+            print("Dataset saved to: " + save_dir)
+        print("Dataset folds saved.")
+    elif folded == 1:
+        tempDict = set_dataset.train_test_split(test_size=0.2, shuffle=True)
+        Dict = tempDict["train"].train_test_split(test_size=0.2) 
+        Dict["validation"] = Dict.pop("test")
+        Dict["test"] = tempDict["test"]
+        save_dir = savepath + "set" + str(set_no) + ".data"
+        Dict.save_to_disk(save_dir)
         print("Dataset saved to: " + save_dir)
-    print("Dataset folds saved.")
 
 def create_folds(dataset, k=5):
     """Takes a dataset and returns k cross fold validation splits.
