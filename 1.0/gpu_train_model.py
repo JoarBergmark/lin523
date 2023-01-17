@@ -53,9 +53,9 @@ def train_model(dataset, savepath, n_epochs=3):
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
     tokenized_dataset = tokenized_dataset.remove_columns(["text", "idx"])
     print("tokenized_datasets column names: ")
-    print(tokenized_datasets["train"].column_names)
+    print(tokenized_dataset["train"].column_names)
     print("tokenized_datasets features: ")
-    print(tokenized_datasets["train"].features)
+    print(tokenized_dataset["train"].features)
     #Tokenized dataset features:
     #    text: Value(string)
     #    labels: ClassLabel
