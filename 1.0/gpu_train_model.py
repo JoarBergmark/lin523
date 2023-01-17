@@ -8,7 +8,7 @@ import os
 from pynvml import *
 import torch
 import sklearn
-def train_model(dataset, savepath="../models/", n_epochs=3):
+def train_model(dataset, savepath, n_epochs=3):
     """Loads a model, defines training parameters and datasets.
     Args:
         savepath: directory to save trained model
@@ -59,7 +59,6 @@ def train_model(dataset, savepath="../models/", n_epochs=3):
     #    attention_mask: Sequence(Value)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     
-    savefile = savepath + save_name
     training_args = TrainingArguments(
             savepath,
             num_train_epochs=n_epochs,
