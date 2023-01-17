@@ -96,9 +96,7 @@ def train_model(dataset, savepath, n_epochs=3):
             compute_metrics=compute_metrics
             )
     dataloader = trainer.get_train_dataloader()
-    trainer.create_optimizer_and_scheduler(
-        training_args[n_epochs] * len(dataloader)
-        )
+    trainer.create_optimizer_and_scheduler(n_epochs * len(dataloader))
     print("Trainer got optimizer.")
     #quit()
 
