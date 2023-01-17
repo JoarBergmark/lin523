@@ -107,7 +107,7 @@ def train_model(dataset, savepath, n_epochs=3):
     print_summary(result)
     trainer.save_model(savepath)
 
-    print("Model trained, results for test split: ")
-    print(compute_metrics(trainer.predict(tokenized_dataset["test"])))
+    #print("Model trained, results for test split: ")
+    #print(compute_metrics(trainer.predict(tokenized_dataset["test"])))
 
 
