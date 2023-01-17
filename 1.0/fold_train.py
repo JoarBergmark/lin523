@@ -28,7 +28,7 @@ def train(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             print("Dataset created and loaded!")
                 
         if False:#model_file_exists:
-
+            print()
         else:
             name = "set" + str(set_no) + "_fold" + str(fold) + ".model"
             train_model(dataset, (savepath + name), n_epochs=epochs)
