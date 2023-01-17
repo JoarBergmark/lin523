@@ -39,5 +39,6 @@ def unfolded(set_no, loadpath="../data/datasets/", savepath="../models/",
     """
     filename = loadpath + "set" + str(set_no) + ".data"
     name = "set" + str(set_no) + "unfolded.model"
+    dataset = load_from_disk(filename)
     train_model(dataset, (savepath + name), n_epochs=epochs)
     print("finished.")
