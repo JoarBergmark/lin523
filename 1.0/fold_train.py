@@ -32,3 +32,12 @@ def train(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         else:
             name = "set" + str(set_no) + "_fold" + str(fold) + ".model"
             train_model(dataset, (savepath + name), n_epochs=epochs)
+            print("finished.")
+def unfolded(set_no, loadpath="../data/datasets/", savepath="../models/",
+        epochs=3):
+    """Trains a single model.
+    """
+    filename = loadpath + "set" + str(set_no) + ".data"
+    name = "set" + str(set_no) + "unfolded.model"
+    train_model(dataset, (savepath + name), n_epochs=epochs)
+    print("finished.")
