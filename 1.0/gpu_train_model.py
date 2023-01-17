@@ -78,13 +78,13 @@ def train_model(dataset, savepath, n_epochs=3):
     print_gpu_utilization()
     
     #optimizer = AdamW(model.paramters(), lr=5e-5)
-    #num_training_steps = num_epochs * len(train_dataloader)
-    #scheduler = get_scheduler(
-    #        "linear",
-    #        optimizer=optimizer,
-    #        num_warmup_steps=0,
-    #        num_training_steps=num_training_steps
-    #        )
+    num_training_steps = num_epochs * len(train_dataloader)
+    scheduler = get_scheduler(
+            "linear",
+            optimizer=optimizer,
+            num_warmup_steps=0,
+            num_training_steps=num_training_steps
+            )
     
     trainer = Trainer(
             model,
@@ -95,11 +95,11 @@ def train_model(dataset, savepath, n_epochs=3):
             tokenizer=tokenizer,
             compute_metrics=compute_metrics
             )
-    #dataloader = trainer.get_train_dataloader()
-    #trainer.create_optimizer_and_scheduler(
-    #    training_args["num_train_epochs"] * len(dataloader)
-    #    )
-    #print("Trainer got optimizer.")
+    dataloader = trainer.get_train_dataloader()
+    trainer.create_optimizer_and_scheduler(
+        training_args["num_train_epochs"] * len(dataloader)
+        )
+    print("Trainer got optimizer.")
     #quit()
 
     print("Training starts here!")
@@ -107,7 +107,7 @@ def train_model(dataset, savepath, n_epochs=3):
     print_gpu_utilization()
     result = trainer.train()
     print_summary(result)
-    trainer.save_model(savefile)
+    trainer.save_model(savepath)
 
     print("Model trained, results for test split: ")
     print(compute_metrics(trainer.predict(tokenized_dataset["test"])))
