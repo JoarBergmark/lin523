@@ -78,13 +78,13 @@ def train_model(dataset, savepath, n_epochs=3):
     print_gpu_utilization()
     
     #optimizer = AdamW(model.paramters(), lr=5e-5)
-    num_training_steps = n_epochs * len(train_dataloader)
-    scheduler = get_scheduler(
-            "linear",
-            optimizer=optimizer,
-            num_warmup_steps=0,
-            num_training_steps=num_training_steps
-            )
+    #num_training_steps = n_epochs * len(train_dataloader)
+    #scheduler = get_scheduler(
+    #        "linear",
+    #        optimizer=optimizer,
+    #        num_warmup_steps=0,
+    #        num_training_steps=num_training_steps
+    #        )
     
     trainer = Trainer(
             model,
