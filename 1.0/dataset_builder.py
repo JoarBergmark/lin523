@@ -1,10 +1,13 @@
 import datasets
-from datasets import Dataset, load_dataset, Features, ClassLabel
+from datasets import Dataset, DatasetDict, load_dataset, Features, ClassLabel
 import glob
 import os
 import pandas as pd
+import numpy as np
+from sklearn.model_selection import StratifiedKFold
 
-def dataset_builder(set_no, path="../data/training_set_rel3.tsv", savepath="../data/datasets/"):
+def dataset_builder(set_no, path="../data/training_set_rel3.tsv",
+        savepath="../data/datasets/", folded=5):
     """Loads data from .tsv-file and saves a DatasetDict object with the
     specified set of essays.
     Args:
@@ -14,20 +17,47 @@ def dataset_builder(set_no, path="../data/training_set_rel3.tsv", savepath="../d
     """
     set_dataset = data_from_csv(set_no, path)
     set_dataset.shuffle()
+    print("Data loaded")
     
-    # Split original training set files into train and test sets.
-    data_dict = set_dataset.train_test_split(test_size=0.2)
-    # Splits train into an additional validation set
-    data_dict["train"], data_dict["validation"] = \
-            [data_dict["train"].train_test_split(test_size=0.2)[i]\
-                for i in ("train","test")]
-    print("Dataset loaded!")
-    print(data_dict)
+    kfolds = create_folds(set_dataset)
+    for num, folds in enumerate(kfolds):
+        save_dir = savepath + "set" + str(set_no) + "/fold" + str(num) + ".data"
+        folds.save_to_disk(save_dir)
+        print("Dataset saved to: " + save_dir)
+    print("Dataset folds saved.")
 
-    save_dir = savepath + str(set_no) + ".data"
-    data_dict.save_to_disk(save_dir)
-    print("Dataset saved to " + save_dir + " as " + str(set_no) + ".data")
-    
+def create_folds(dataset, k=5):
+    """Takes a dataset and returns k cross fold validation splits.
+    Args:
+        dataset: dataset object containing all items
+        k: number of folds
+    The folds are stratified, meaning they will have an equal division of
+    "labels" values.
+    """
+    folds = StratifiedKFold(k)
+    # Make splits stratified based on labels
+    splits = folds.split(np.zeros(dataset.num_rows), dataset["labels"]) 
+    fold_list = list()
+
+    for train_idxs, test_idxs in splits:
+        # Creates indexes for splitting training split into train and validation
+        train_ds = dataset.select(train_idxs)
+        skf = StratifiedKFold(k)
+        # Makes the validation set split stratified
+        tv_splits = skf.split(np.zeros(train_ds.num_rows), train_ds["labels"])
+        for train, val in tv_splits:
+        # Final splits are 20% test, 80% test+validation (split 80/20 again)
+            fold_dataDict = DatasetDict({
+                "train": train_ds.select(train),
+                "validation": train_ds.select(val),
+                "test": dataset.select(test_idxs)
+                })
+            # Appends current dataDict to folds.
+            fold_list.append(fold_dataDict)
+            # Breaks loop to avoid creating unessecary folds.
+            break
+    return fold_list
+
 def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     """Extracts relevant rows and columns to a dataset object.
     Args:
@@ -37,8 +67,12 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     # Read .csv to pandas dataframe
     df = pd.read_csv(filename, sep="\t", encoding="ISO-8859-1")
     df = df[df["essay_set"] == set_no]
-    df = df[["essay", "domain1_score"]]
-    df = df.rename(columns={"essay": "sequence", "domain1_score": "labels"})
+    df = df[["essay", "domain1_score", "essay_id"]]
+    df = df.rename(columns={
+        "essay": "text",
+        "domain1_score": "labels",
+        "essay_id": "idx"
+        })
     # Decrement label for set 1, 2 to avoid label > num_labels in ClassLabel
     if set_no == 1:
         df["labels"] = df["labels"] - 2

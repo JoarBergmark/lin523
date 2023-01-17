@@ -31,7 +31,7 @@ def train_model(set_no, dataset_path="../data/datasets/", savepath="../models/")
         return tokenizer(essay["sequence"], truncation=True)
 
     def compute_metrics(eval_preds):
-        metric = evaluate.load("accuracy", "precision")
+        metric = evaluate.load("accuracy")
             # labels borde vara "orden" som motsvarar kategorier
         logits, labels = eval_preds
         predictions = np.argmax(logits, axis=-1)

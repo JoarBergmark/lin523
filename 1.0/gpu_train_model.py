@@ -8,22 +8,22 @@ import os
 from pynvml import *
 import torch
 import sklearn
-def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath="../models/"):
+def train_model(dataset, savepath="../models/", n_epochs=3):
     """Loads a model, defines training parameters and datasets.
     Args:
         savepath: directory to save trained model
         set_no: essay set for model
     """
-    filename = dataset_path + str(set_no) + ".data"
-    print("Loading " + filename)
-    print("Filepath found: " + str(os.path.exists(filename)))
-    if os.path.exists(filename):
-        dataset = load_from_disk(filename)
-        print("Dataset loaded!")
-    else:
-        dataset_builder(set_no)
-        dataset = load_from_disk(filename)
-        print("Dataset created and loaded")
+    #filename = dataset_path + str(set_no) + ".data"
+    #print("Loading " + filename)
+    #print("Filepath found: " + str(os.path.exists(filename)))
+    #if os.path.exists(filename):
+    #    dataset = load_from_disk(filename)
+    #    print("Dataset loaded!")
+    #else:
+    #    dataset_builder(set_no)
+    #    dataset = load_from_disk(filename)
+    #    print("Dataset created and loaded")
 
     # Load pretrained model and tokenizer
     checkpoint = "bert-base-cased"
@@ -31,10 +31,10 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
 
     # Tokenize function for dataset.map()
     def tokenize_function(essay):
-        return tokenizer(essay["sequence"], truncation=True)
+        return tokenizer(essay["text"], truncation=True)
 
     def compute_metrics(eval_preds):
-        metric = evaluate.load("accuracy")#, "precision")
+        metric = evaluate.load("accuracy")
         logits, labels = eval_preds
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, references=labels)    
@@ -52,7 +52,7 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
     #Tokenized dataset features:
-    #    sequence: Value(string)
+    #    text: Value(string)
     #    labels: ClassLabel
     #    input_ids: Sequence(Value)
     #    token_type_ids: Sequence(Value)
@@ -62,7 +62,7 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     savefile = savepath + save_name
     training_args = TrainingArguments(
             savepath,
-            num_train_epochs=3,
+            num_train_epochs=n_epochs,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
             per_device_train_batch_size=2,
@@ -111,6 +111,6 @@ def train_model(set_no, save_name, dataset_path="../data/datasets/", savepath=".
     trainer.save_model(savefile)
 
     print("Model trained, results for test split: ")
-    trainer.predict(tokenized_dataset["test"])
+    print(compute_metrics(trainer.predict(tokenized_dataset["test"])))
 
 
