@@ -47,7 +47,7 @@ def unfolded(set_no, loadpath="../data/datasets/", savepath="../models/",
 
 if __name__ == '__main__':
     # Run fold_train from command line
-    
+    print(sys.argv) 
     #args =  for arg in len(sys.argv) - 1
     if sys.argv[1] == "train":
         train(sys.argv[2:])
