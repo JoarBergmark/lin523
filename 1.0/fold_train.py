@@ -51,6 +51,6 @@ if __name__ == '__main__':
     #args =  for arg in len(sys.argv) - 1
     if sys.argv[1] == "train":
         train(sys.argv[2:])
-    eif sys.argv[1] == "unfolded":
+    elif sys.argv[1] == "unfolded":
         unfolded(sys.argv[2:])
 
