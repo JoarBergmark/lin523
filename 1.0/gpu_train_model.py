@@ -36,11 +36,14 @@ def train_model(dataset, savepath, n_epochs=3):
         return tokenizer(essay["text"], truncation=True)
 
     def compute_metrics(eval_preds):
-        metric = evaluate.load("f1", "accuracy")
+        metric1 = evaluate.load("f1")
+        metric2 = evaluate.load("accuracy")
         logits, labels = eval_preds
-        predictions = np.argmax(logits, axis=-1)
-        return metric.compute(predictions=predictions, references=labels, 
-            average="micro")    
+        preds = np.argmax(logits, axis=-1)
+        m1 = metric1.compute(predictions=preds, refrences=labels,
+                average="micro")["f1"]
+        m2 = metric2.compute(predictions=preds, refrences=labels)["accuracy"]
+        return {"f1": m1, "accuracy": m2}
 
     def print_gpu_utilization():
         nvmlInit()
@@ -68,8 +71,8 @@ def train_model(dataset, savepath, n_epochs=3):
             evaluation_strategy="epoch",
             #gradient_accumulation_steps=4,
                 # Bytte ut dessa mot train/eval_dataloader nedan
-                #per_device_train_batch_size=4,
-                #per_device_eval_batch_size=4,
+                per_device_train_batch_size=16,
+                per_device_eval_batch_size=16,
             )
     torch.cuda.empty_cache()
     print("GPU memory before model: ")
@@ -107,8 +110,7 @@ def train_model(dataset, savepath, n_epochs=3):
             tokenizer=tokenizer,
             compute_metrics=compute_metrics,
             optimizers=(optimizer, lr_scheduler),
-            )
-    
+            ) 
     #dataloader = trainer.get_train_dataloader()
     #trainer.create_optimizer_and_scheduler(n_epochs * len(dataloader))
     #print("Trainer got optimizer.")
