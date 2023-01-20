@@ -2,6 +2,7 @@ from gpu_train_model import train_model
 from dataset_builder import dataset_builder
 from datasets import load_from_disk
 import os
+import sys
 def train(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         savepath="../models/", overwrite=False, epochs=3):
     """Trains multiple models for cross fold validation, print and saves results.
@@ -42,3 +43,14 @@ def unfolded(set_no, loadpath="../data/datasets/", savepath="../models/",
     dataset = load_from_disk(filename)
     train_model(dataset, (savepath + name), n_epochs=epochs)
     print("finished.")
+
+
+if __name__ == '__main__':
+    # Run fold_train from command line
+    
+    #args =  for arg in len(sys.argv) - 1
+    if sys.argv[1] == "train":
+        train(sys.argv[2:])
+    eif sys.argv[1] == "unfolded":
+        unfolded(sys.argv[2:])
+

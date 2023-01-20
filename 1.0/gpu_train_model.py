@@ -7,6 +7,7 @@ import evaluate
 import os
 from pynvml import *
 import torch
+from torch.utils.data import DataLoader
 import sklearn
 def train_model(dataset, savepath, n_epochs=3):
     """Loads a model, defines training parameters and datasets.
@@ -52,16 +53,11 @@ def train_model(dataset, savepath, n_epochs=3):
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
     tokenized_dataset = tokenized_dataset.remove_columns(["text", "idx"])
-    print("tokenized_datasets column names: ")
-    print(tokenized_dataset["train"].column_names)
-    print("tokenized_datasets features: ")
-    print(tokenized_dataset["train"].features)
-    #Tokenized dataset features:
-    #    text: Value(string)
-    #    labels: ClassLabel
-    #    input_ids: Sequence(Value)
-    #    token_type_ids: Sequence(Value)
-    #    attention_mask: Sequence(Value)
+#tokenized_datasets features:{
+#'labels':ClassLabel(names=['0', '1', '2', '3'],id=None),
+#'input_ids':Sequence(feature=Value(dtype='int32',id=None),length=-1,id=None),
+#'token_type_ids':Sequence(feature=Value(dtype='int8',id=None),length=-1,id=None),
+#'attention_mask':Sequence(feature=Value(dtype='int8',id=None),length=-1,id=None)}
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     
     training_args = TrainingArguments(
@@ -69,8 +65,9 @@ def train_model(dataset, savepath, n_epochs=3):
             num_train_epochs=n_epochs,
             evaluation_strategy="epoch",
             gradient_accumulation_steps=4,
-            per_device_train_batch_size=2,
-            per_device_eval_batch_size=2,
+                # Bytte ut dessa mot train/eval_dataloader nedan
+                #per_device_train_batch_size=4,
+                #per_device_eval_batch_size=4,
             )
     torch.cuda.empty_cache()
     print("GPU memory before model: ")
@@ -82,15 +79,23 @@ def train_model(dataset, savepath, n_epochs=3):
     print("GPU memory with loaded model: ")
     print_gpu_utilization()
     
-    #optimizer = AdamW(model.paramters(), lr=5e-5)
-    #num_training_steps = n_epochs * len(train_dataloader)
-    #scheduler = get_scheduler(
-    #        "linear",
-    #        optimizer=optimizer,
-    #        num_warmup_steps=0,
-    #        num_training_steps=num_training_steps
-    #        )
     
+    train_datalaoder = DataLoader(
+            tokenized_dataset["train"], batch_size=4, collate_fn=data_collator
+            )
+    eval_dataloader = DataLoader(
+            tokenized_datasets["validation"], batch_size=4,
+            collate_fn=data_collator
+            )
+
+    optimizer = AdamW(model.paramters(), lr=5e-5)
+    lr_scheduler = get_scheduler(
+            "linear",
+            optimizer=optimizer,
+            num_warmup_steps=0,
+            num_training_steps=(n_epochs * len(train_dataloader))
+            )
+
     trainer = Trainer(
             model,
             training_args,
@@ -98,11 +103,13 @@ def train_model(dataset, savepath, n_epochs=3):
             eval_dataset=tokenized_dataset["validation"],
             data_collator=data_collator, # denna rad behövs inte för detta
             tokenizer=tokenizer,
-            compute_metrics=compute_metrics
+            compute_metrics=compute_metrics,
+            optimizers=(optimizer, lr_scheduler),
             )
-    dataloader = trainer.get_train_dataloader()
-    trainer.create_optimizer_and_scheduler(n_epochs * len(dataloader))
-    print("Trainer got optimizer.")
+    
+    #dataloader = trainer.get_train_dataloader()
+    #trainer.create_optimizer_and_scheduler(n_epochs * len(dataloader))
+    #print("Trainer got optimizer.")
     #quit()
 
     print("Training starts here!")
