@@ -69,10 +69,9 @@ def train_model(dataset, savepath, n_epochs=3):
             savepath,
             num_train_epochs=n_epochs,
             evaluation_strategy="epoch",
-            #gradient_accumulation_steps=4,
-                # Bytte ut dessa mot train/eval_dataloader nedan
-                per_device_train_batch_size=16,
-                per_device_eval_batch_size=16,
+            gradient_accumulation_steps=4,
+            per_device_train_batch_size=16,
+            per_device_eval_batch_size=16,
             )
     torch.cuda.empty_cache()
     print("GPU memory before model: ")
