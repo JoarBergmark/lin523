@@ -84,7 +84,7 @@ def train_model(dataset, savepath, n_epochs=3):
             tokenized_dataset["train"], batch_size=4, collate_fn=data_collator
             )
     eval_dataloader = DataLoader(
-            tokenized_datasets["validation"], batch_size=4,
+            tokenized_dataset["validation"], batch_size=4,
             collate_fn=data_collator
             )
 
