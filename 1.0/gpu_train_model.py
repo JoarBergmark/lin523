@@ -88,11 +88,11 @@ def train_model(dataset, savepath, n_epochs=3):
             collate_fn=data_collator
             )
 
-    optimizer = AdamW(
-        AutoModelForSequenceClassification.from_pretrained(
-            checkpoint, num_labels=(dataset["train"].features["labels"].num_classes)
-            ).paramters(), lr=5e-5
-        )
+    optimizer = AdamW(model.parameters(), lr=5e-5)
+        #AutoModelForSequenceClassification.from_pretrained(
+        #    checkpoint, num_labels=(dataset["train"].features["labels"].num_classes)
+        #    ).parameters(), lr=5e-5
+        #)
     lr_scheduler = get_scheduler(
             "linear",
             optimizer=optimizer,
