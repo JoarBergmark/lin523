@@ -27,7 +27,8 @@ def train_model(dataset, savepath, n_epochs=3):
     #    print("Dataset created and loaded")
 
     # Load pretrained model and tokenizer
-    checkpoint = "bert-base-cased"
+    checkpoint = "distilbert-base-uncased"
+    #checkpoint = "bert-base-cased"
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
     # Tokenize function for dataset.map()
