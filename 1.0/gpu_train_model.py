@@ -39,7 +39,8 @@ def train_model(dataset, savepath, n_epochs=3):
         metric = evaluate.load("f1", "accuracy")
         logits, labels = eval_preds
         predictions = np.argmax(logits, axis=-1)
-        return metric.compute(predictions=predictions, references=labels)    
+        return metric.compute(predictions=predictions, references=labels, 
+            avrage="micro")    
 
     def print_gpu_utilization():
         nvmlInit()
