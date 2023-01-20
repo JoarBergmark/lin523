@@ -51,7 +51,7 @@ if __name__ == '__main__':
     print(sys.argv) 
     #args =  for arg in len(sys.argv) - 1
     if sys.argv[1] == "train":
-        train(tuple(sys.argv[2:]))
+        train(sys.argv[2])
     elif sys.argv[1] == "unfolded":
-        unfolded(tuple(sys.argv[2:]))
+        unfolded(sys.argv[2])
 
