@@ -80,7 +80,7 @@ def train_model(dataset, savepath, n_epochs=3):
     print_gpu_utilization()
     
     
-    train_datalaoder = DataLoader(
+    train_dataloader = DataLoader(
             tokenized_dataset["train"], batch_size=4, collate_fn=data_collator
             )
     eval_dataloader = DataLoader(

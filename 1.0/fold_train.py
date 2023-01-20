@@ -53,5 +53,5 @@ if __name__ == '__main__':
     if sys.argv[1] == "train":
         train(sys.argv[2:])
     elif sys.argv[1] == "unfolded":
-        unfolded(sys.argv[2:])
+        unfolded(sys.argv[2])
 
