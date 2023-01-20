@@ -36,7 +36,7 @@ def train_model(dataset, savepath, n_epochs=3):
         return tokenizer(essay["text"], truncation=True)
 
     def compute_metrics(eval_preds):
-        metric = evaluate.load("accuracy")
+        metric = evaluate.load("f1", "accuracy")
         logits, labels = eval_preds
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, references=labels)    
@@ -65,7 +65,7 @@ def train_model(dataset, savepath, n_epochs=3):
             savepath,
             num_train_epochs=n_epochs,
             evaluation_strategy="epoch",
-            gradient_accumulation_steps=4,
+            #gradient_accumulation_steps=4,
                 # Bytte ut dessa mot train/eval_dataloader nedan
                 #per_device_train_batch_size=4,
                 #per_device_eval_batch_size=4,
@@ -90,10 +90,6 @@ def train_model(dataset, savepath, n_epochs=3):
             )
 
     optimizer = AdamW(model.parameters(), lr=5e-5)
-        #AutoModelForSequenceClassification.from_pretrained(
-        #    checkpoint, num_labels=(dataset["train"].features["labels"].num_classes)
-        #    ).parameters(), lr=5e-5
-        #)
     lr_scheduler = get_scheduler(
             "linear",
             optimizer=optimizer,
