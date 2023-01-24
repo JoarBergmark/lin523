@@ -74,15 +74,15 @@ class trainer(object):
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
-            print("print(self.evaluate())")
-            print(self.evaluate(model))
+            #print("print(self.evaluate())")
+            #print(self.evaluate(model))
             # Set model back to training mode
-            model.train()
+            #model.train()
 
         print("Training Finished!")
         print("Saving model not implemented.")
 
-    def evaluate(self, model):
+    #def evaluate(self, model):
         metric1 = evaluate.load("f1")
         metric2 = evaluate.load("accuracy")
         # Set model to evaluation mode
@@ -95,8 +95,11 @@ class trainer(object):
             preds = torch.argmax(logits, dim=-1)
             metric1.add_batch(predictions=preds, references=batch["labels"])
             metric2.add_batch(predictions=preds, references=batch["labels"],
-                    average="micro")
-        return {"f1": metric1.compute(), "accuracy": metric2.compute()}
+                    average="micro"
+                    )
+        print(metric1.compute())
+        print(metric2.compute())
+        #return {"f1": metric1.compute(), "accuracy": metric2.compute()}
 
     #def compute_metrics(eval_preds):
     #    metric1 = evaluate.load("f1")
