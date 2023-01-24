@@ -74,7 +74,7 @@ class trainer(object):
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
-            print("Epoch + " str(epoch) + " evaluation: ")
+            print("Epoch + " + str(epoch) + " evaluation: ")
             print(self.evaluate(model, eval_dataloader))
 
         print("Training Finished!")
