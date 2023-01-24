@@ -75,12 +75,14 @@ class trainer(object):
                 optimizer.zero_grad()
                 progress_bar.update(1)
             print("print(self.evaluate())")
-            print(self.evaluate())
+            print(self.evaluate(model))
+            # Set model back to training mode
+            model.train()
 
         print("Training Finished!")
         print("Saving model not implemented.")
 
-    def evaluate(self):
+    def evaluate(self, model):
         metric1 = evaluate.load("f1")
         metric2 = evaluate.load("accuracy")
         # Set model to evaluation mode
