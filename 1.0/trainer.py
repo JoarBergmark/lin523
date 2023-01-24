@@ -45,10 +45,10 @@ class trainer(object):
             num_labels=(self.dataset["train"].features["labels"].num_classes)
             )
         
-        outputs = model(**batch)
-        print("print(outputs.loss), print(outputs.logit.shape): ")
-        print(outputs.loss)
-        print(outputs.logits.shape)
+        #outputs = model(**batch)
+        #print("print(outputs.loss), print(outputs.logit.shape): ")
+        #print(outputs.loss)
+        #print(outputs.logits.shape)
 
         optimizer = AdamW(model.parameters(), lr=5e-5)
         num_training_steps = self.epochs * len(train_dataloader)
