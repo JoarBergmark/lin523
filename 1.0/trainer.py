@@ -63,7 +63,7 @@ class trainer(object):
         print("Training start:")
         # Set model to training mode
         model.train()
-        for epoch  in range(self.epochs):
+        for epoch in range(self.epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(device) for k, v in batch.items()}
                 outputs = model(**batch)
@@ -74,15 +74,13 @@ class trainer(object):
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
-            #print("print(self.evaluate())")
-            #print(self.evaluate(model))
-            # Set model back to training mode
-            #model.train()
+            print("Epoch + " str(epoch) + " evaluation: ")
+            print(self.evaluate(model, eval_dataloader))
 
         print("Training Finished!")
         print("Saving model not implemented.")
 
-    #def evaluate(self, model):
+    def evaluate(self, model, eval_dataloader):
         metric1 = evaluate.load("f1")
         metric2 = evaluate.load("accuracy")
         # Set model to evaluation mode
@@ -93,11 +91,12 @@ class trainer(object):
                 outputs = model(**batch)
             logits = outputs.logits
             preds = torch.argmax(logits, dim=-1)
-            #metric1.add_batch(predictions=preds, references=batch["labels"])
+            metric1.add_batch(predictions=preds, references=batch["labels"])
             metric2.add_batch(predictions=preds, references=batch["labels"])
-        #print(metric1.compute(avrage="micro"))
-        print(metric2.compute())
-        #return {"f1": metric1.compute(), "accuracy": metric2.compute()}
+        model.train()
+        f1 = metric1.compute(avrage="micro")
+        accuracy = metric2.compute()
+        return {"f1": f1, "accuracy": accuracy}
 
     #def compute_metrics(eval_preds):
     #    metric1 = evaluate.load("f1")
