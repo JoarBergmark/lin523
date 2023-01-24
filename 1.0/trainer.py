@@ -13,6 +13,7 @@ class trainer(object):
         self.checkpoint = checkpoint
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         self.epochs = epochs
+        self.device = None
 
     def tokenize_function(self, essay):
         return self.tokenizer(essay["text"], truncation=True)
@@ -56,16 +57,16 @@ class trainer(object):
         print("print(num_training_steps): ")
         print(num_training_steps)
         
-        device = torch.device("cuda") if torch.cuda.is_available() \
+        self.device = torch.device("cuda") if torch.cuda.is_available() \
                 else torch.device("cpu")
-        model.to(device)
+        model.to(self.device)
         progress_bar = tqdm(range(num_training_steps))
         print("Training start:")
         # Set model to training mode
         model.train()
         for epoch in range(self.epochs):
             for batch in train_dataloader:
-                batch = {k: v.to(device) for k, v in batch.items()}
+                batch = {k: v.to(self.device) for k, v in batch.items()}
                 outputs = model(**batch)
                 loss = outputs.loss
                 loss.backward()
@@ -86,7 +87,7 @@ class trainer(object):
         # Set model to evaluation mode
         model.eval()
         for batch in eval_dataloader:
-            batch = {k: v.to(device) for k, v in batch.items()}
+            batch = {k: v.to(self.device) for k, v in batch.items()}
             with torch.no_grad():
                 outputs = model(**batch)
             logits = outputs.logits
