@@ -2,7 +2,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import DataCollatorWithPadding
 import torch
 from torch.utils.data import DataLoader
-from transformers import AdamW, get_scheduler
+from transformers import get_scheduler
 from tqdm.auto import tqdm # For progress bar
 import evaluate
 class trainer(object):
@@ -46,7 +46,9 @@ class trainer(object):
             )
         
 
-        optimizer = AdamW(model.parameters(), lr=5e-5)
+        #optimizer = AdamW(model.parameters(), lr=5e-5)
+        optimizer = torch.optim.AdamW(model.parameters)
+
         num_training_steps = self.epochs * len(train_dataloader)
         lr_scheduler = get_scheduler(
                 "linear",
@@ -75,7 +77,7 @@ class trainer(object):
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
-            print("\n Epoch + " + str(epoch + 1) + " evaluation: ")
+            print("\n Epoch " + str(epoch + 1) + " evaluation: ")
             print(self.evaluate(model, eval_dataloader))
 
         print("Training Finished!")
@@ -96,9 +98,9 @@ class trainer(object):
             metric2.add_batch(predictions=preds, references=batch["labels"])
         # Set model back to training mode
         model.train()
-        f1 = metric1.compute(average="micro")
-        accuracy = metric2.compute()
-        return {"f1": f1, "accuracy": accuracy}
+        evals = metric1.compute(average="micro")
+        evals.update(metric2.compute())
+        return evals
 
     #def compute_metrics(eval_preds):
     #    metric1 = evaluate.load("f1")
@@ -107,4 +109,4 @@ class trainer(object):
     #    preds = np.argmax(logits, axis=-1)
     #    m1 = metric1.compute(predictions=preds, references=labels, average="micro")
     #    m2 = metric2.compute(predictions=preds, references=labels)
-    #    return {"f1": m1, "accuracy": m2}
+    #    return m1, m2
