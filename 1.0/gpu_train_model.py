@@ -40,8 +40,8 @@ def train_model(dataset, savepath, n_epochs=3):
         metric2 = evaluate.load("accuracy")
         logits, labels = eval_preds
         preds = np.argmax(logits, axis=-1)
-        m1 = metric1.compute(predictions=preds, refrences=labels, average="micro")
-        m2 = metric2.compute(predictions=preds, refrences=labels)
+        m1 = metric1.compute(predictions=preds, references=labels, average="micro")
+        m2 = metric2.compute(predictions=preds, references=labels)
         return {"f1": m1, "accuracy": m2}
 
     def print_gpu_utilization():
