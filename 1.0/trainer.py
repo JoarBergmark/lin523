@@ -25,9 +25,8 @@ class trainer(object):
         tokenized_datasets = tokenized_datasets.remove_columns(["text", "idx"])
         tokenized_datasets.set_format("torch")
 
-        print(tokenized_datasets["train"].column_names)
-        # tokenized_datasets structure:
-        #
+        #print(tokenized_datasets["train"].column_names)
+        # ["labels", "input_ids", "attention_mask"]
         
         train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True,
                 batch_size=8, collate_fn=data_collator
@@ -45,10 +44,6 @@ class trainer(object):
             num_labels=(self.dataset["train"].features["labels"].num_classes)
             )
         
-        #outputs = model(**batch)
-        #print("print(outputs.loss), print(outputs.logit.shape): ")
-        #print(outputs.loss)
-        #print(outputs.logits.shape)
 
         optimizer = AdamW(model.parameters(), lr=5e-5)
         num_training_steps = self.epochs * len(train_dataloader)
@@ -68,7 +63,7 @@ class trainer(object):
         print("Training start:")
         # Set model to training mode
         model.train()
-        for epoch  in range(epochs):
+        for epoch  in range(self.epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(device) for k, v in batch.items()}
                 outputs = model(**batch)
