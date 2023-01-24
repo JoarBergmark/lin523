@@ -93,11 +93,9 @@ class trainer(object):
                 outputs = model(**batch)
             logits = outputs.logits
             preds = torch.argmax(logits, dim=-1)
-            metric1.add_batch(predictions=preds, references=batch["labels"],
-                    avrage="micro"
-                    )
+            metric1.add_batch(predictions=preds, references=batch["labels"])
             metric2.add_batch(predictions=preds, references=batch["labels"])
-        print(metric1.compute())
+        print(metric1.compute(avrage="micro"))
         print(metric2.compute())
         #return {"f1": metric1.compute(), "accuracy": metric2.compute()}
 
