@@ -2,7 +2,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import DataCollatorWithPadding
 import torch
 from torch.utils.data import DataLoader
-from transformers import get_scheduler
+from transformers import AdamW, get_scheduler
 from tqdm.auto import tqdm # For progress bar
 import evaluate
 class trainer(object):
@@ -46,8 +46,8 @@ class trainer(object):
             )
         
 
-        #optimizer = AdamW(model.parameters(), lr=5e-5)
-        optimizer = torch.optim.AdamW(model.parameters)
+        optimizer = AdamW(model.parameters(), lr=5e-5)
+        #optimizer = torch.optim.AdamW(model.parameters)
 
         num_training_steps = self.epochs * len(train_dataloader)
         lr_scheduler = get_scheduler(
