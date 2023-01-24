@@ -8,7 +8,7 @@ import evaluate
 class trainer(object):
     """Trainer class for model initiation and training.
     """
-    def __init__(dataset, checkpoint="distilbert-base-uncased", epochs=3):
+    def __init__(self, dataset, checkpoint="distilbert-base-uncased", epochs=3):
         self.dataset = dataset
         self.checkpoint = checkpoint
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
@@ -32,14 +32,13 @@ class trainer(object):
         train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True,
                 batch_size=8, collate_fn=data_collator
                 )
-        eval_dataloader = DataLoader(tokenized_datasets["evaluation"],
+        eval_dataloader = DataLoader(tokenized_datasets["validation"],
                 shuffle=True, batch_size=8, collate_fn=data_collator
                 )
 
-        for batch in train_datalaoder:
-            print({k: v.shape for k, v in batch.items()})
         # batch structure:
-        #
+        # {'labels': torch.Size([8]), 'input_ids': torch.Size([8, 247]),
+        # 'attention_mask': torch.Size([8, 247])}
 
         model = AutoModelForSequenceClassification.from_pretrained(
             self.checkpoint,
@@ -55,18 +54,19 @@ class trainer(object):
         num_training_steps = self.epochs * len(train_dataloader)
         lr_scheduler = get_scheduler(
                 "linear",
-                optimizer=optimizer
+                optimizer=optimizer,
                 num_warmup_steps=0,
                 num_training_steps=num_training_steps
                 )
         print("print(num_training_steps): ")
         print(num_training_steps)
         
-        device = torch.device("cuda") if torch.cuda.is_avaliable() \
+        device = torch.device("cuda") if torch.cuda.is_available() \
                 else torch.device("cpu")
         model.to(device)
         progress_bar = tqdm(range(num_training_steps))
-        
+        print("quiting at training start.")
+        quit()
         # Set model to training mode
         model.train()
         for epoch  in range(epochs):

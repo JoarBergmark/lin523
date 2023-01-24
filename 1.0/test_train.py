@@ -3,13 +3,12 @@ from dataset_builder import dataset_builder
 from datasets import load_from_disk
 import os
 import sys
-def train(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
-        savepath="../models/", overwrite=False, epochs=3):
+def train(set_no, loadpath="../data/datasets/", epochs=3):
     filename = loadpath + "set" + str(set_no) + ".data"
     print("filename: " + filename)
     dataset = load_from_disk(filename)
-    trainer = trainer(dataset, checkpoint="distilbert-base-uncased", epochs=3)
-    trainer.train()
+    model_trainer = trainer(dataset, epochs=3)
+    model_trainer.train()
     print("Training finished in test_train")
 
 if __name__ == '__main__':
