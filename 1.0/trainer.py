@@ -65,8 +65,7 @@ class trainer(object):
                 else torch.device("cpu")
         model.to(device)
         progress_bar = tqdm(range(num_training_steps))
-        print("quiting at training start.")
-        quit()
+        print("Training start:")
         # Set model to training mode
         model.train()
         for epoch  in range(epochs):
