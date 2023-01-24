@@ -75,7 +75,7 @@ class trainer(object):
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
-            print("Epoch + " + str(epoch) + " evaluation: ")
+            print("\n Epoch + " + str(epoch + 1) + " evaluation: ")
             print(self.evaluate(model, eval_dataloader))
 
         print("Training Finished!")
@@ -94,8 +94,9 @@ class trainer(object):
             preds = torch.argmax(logits, dim=-1)
             metric1.add_batch(predictions=preds, references=batch["labels"])
             metric2.add_batch(predictions=preds, references=batch["labels"])
+        # Set model back to training mode
         model.train()
-        f1 = metric1.compute(avrage="micro")
+        f1 = metric1.compute(average="micro")
         accuracy = metric2.compute()
         return {"f1": f1, "accuracy": accuracy}
 
