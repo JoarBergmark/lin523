@@ -71,15 +71,16 @@ class trainer(object):
                 outputs = model(**batch)
                 loss = outputs.loss
                 loss.backward()
+                print(type(loss.item()))
                 batch_losses.append(loss.item())
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
             epoch_loss = sum(batch_losses) / len(batch_losses)
-            print("\n Average training batch loss: " + str(epoch_loss))
             print("\n Epoch " + str(epoch + 1) + " evaluation: ")
-            print(self.evaluate(model, eval_dataloader))
+            print(self.evaluate(model, eval_dataloader).update({"train_loss":
+                epoch_loss}), "\n")
 
         print("Training Finished!")
         print("Saving model not implemented.")
