@@ -79,7 +79,8 @@ class trainer(object):
             epoch_loss = sum(batch_losses) / len(batch_losses)
             print("\n Epoch " + str(epoch + 1) + " evaluation: ")
             print(self.evaluate(model, eval_dataloader).update({"train_loss":
-                epoch_loss}), "\n")
+                epoch_loss}))
+            print("\n")
 
         print("Training Finished!")
         print("Saving model not implemented.")
