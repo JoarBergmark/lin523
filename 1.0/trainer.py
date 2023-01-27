@@ -68,7 +68,8 @@ class trainer(object):
             batch_losses = list()
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
-                if len(batch_losses) == 0
+                # Print first batch each epoch to check shuffle
+                if len(batch_losses) == 0:
                     print(batch)
                 outputs = model(**batch)
                 loss = outputs.loss
