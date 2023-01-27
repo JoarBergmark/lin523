@@ -71,7 +71,6 @@ class trainer(object):
                 outputs = model(**batch)
                 loss = outputs.loss
                 loss.backward()
-                print(type(loss.item()))
                 batch_losses.append(loss.item())
                 optimizer.step()
                 lr_scheduler.step()
