@@ -71,13 +71,13 @@ class trainer(object):
                 outputs = model(**batch)
                 loss = outputs.loss
                 loss.backward()
-                batch_losses.append(loss)
+                batch_losses.append(loss.item())
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
             epoch_loss = sum(batch_losses) / len(batch_losses)
-            print("Average training batch loss: " + str(epoch_loss))
+            print("\n Average training batch loss: " + str(epoch_loss))
             print("\n Epoch " + str(epoch + 1) + " evaluation: ")
             print(self.evaluate(model, eval_dataloader))
 
@@ -94,7 +94,7 @@ class trainer(object):
             batch = {k: v.to(self.device) for k, v in batch.items()}
             with torch.no_grad():
                 outputs = model(**batch)
-            batch_losses.append(outputs.loss)
+            batch_losses.append(outputs.loss.item())
             logits = outputs.logits
             preds = torch.argmax(logits, dim=-1)
             metric1.add_batch(predictions=preds, references=batch["labels"])
