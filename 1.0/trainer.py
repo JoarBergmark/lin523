@@ -13,7 +13,8 @@ class trainer(object):
         self.checkpoint = checkpoint
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         self.epochs = epochs
-        self.device = None
+        self.device = torch.device("cuda") if torch.cuda.is_available()\
+                else torch.device("cpu")
 
     def tokenize_function(self, essay):
         return self.tokenizer(essay["text"], truncation=True)
@@ -56,27 +57,27 @@ class trainer(object):
                 num_warmup_steps=0,
                 num_training_steps=num_training_steps
                 )
-        print("print(num_training_steps): ")
-        print(num_training_steps)
+        print("print(num_training_steps): " + str(num_training_steps))
         
-        self.device = torch.device("cuda") if torch.cuda.is_available() \
-                else torch.device("cpu")
         model.to(self.device)
         progress_bar = tqdm(range(num_training_steps))
         print("Training start:")
         # Set model to training mode
         model.train()
         for epoch in range(self.epochs):
+            batch_losses = list()
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
                 outputs = model(**batch)
                 loss = outputs.loss
                 loss.backward()
-
+                batch_losses.append(loss)
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 progress_bar.update(1)
+            epoch_loss = sum(batch_losses) / len(batch_losses)
+            print("Average training batch loss: " + str(epoch_loss))
             print("\n Epoch " + str(epoch + 1) + " evaluation: ")
             print(self.evaluate(model, eval_dataloader))
 
@@ -88,25 +89,21 @@ class trainer(object):
         metric2 = evaluate.load("accuracy")
         # Set model to evaluation mode
         model.eval()
+        batch_losses = list()
         for batch in eval_dataloader:
             batch = {k: v.to(self.device) for k, v in batch.items()}
             with torch.no_grad():
                 outputs = model(**batch)
+            batch_losses.append(outputs.loss)
             logits = outputs.logits
             preds = torch.argmax(logits, dim=-1)
             metric1.add_batch(predictions=preds, references=batch["labels"])
             metric2.add_batch(predictions=preds, references=batch["labels"])
+        eval_loss = sum(batch_losses) / len(batch_losses)
         # Set model back to training mode
         model.train()
         evals = metric1.compute(average="micro")
         evals.update(metric2.compute())
+        evals.update("eval_loss": eval_loss)
         return evals
 
-    #def compute_metrics(eval_preds):
-    #    metric1 = evaluate.load("f1")
-    #    metric2 = evaluate.load("accuracy")
-    #    logits, labels = eval_preds
-    #    preds = np.argmax(logits, axis=-1)
-    #    m1 = metric1.compute(predictions=preds, references=labels, average="micro")
-    #    m2 = metric2.compute(predictions=preds, references=labels)
-    #    return m1, m2
