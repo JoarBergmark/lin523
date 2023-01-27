@@ -7,7 +7,7 @@ def train(set_no, loadpath="../data/datasets/", epochs=5):
     filename = loadpath + "set" + str(set_no) + ".data"
     print("filename: " + filename)
     dataset = load_from_disk(filename)
-    model_trainer = trainer(dataset, epochs)
+    model_trainer = trainer(dataset, epochs=epochs)
     model_trainer.train()
     print("Training finished in test_train")
 
