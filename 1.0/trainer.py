@@ -104,6 +104,6 @@ class trainer(object):
         model.train()
         evals = metric1.compute(average="micro")
         evals.update(metric2.compute())
-        evals.update("eval_loss": eval_loss)
+        evals.update({"eval_loss": eval_loss})
         return evals
 
