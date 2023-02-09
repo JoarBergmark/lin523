@@ -18,13 +18,13 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     
     # Kanske mindre för att spara på minne
-    chunk_size = 128 # tokenizer.model_max_length = 512
+    chunk_size = 256 # tokenizer.model_max_length = 512
     
     raw_dataset = all_essays_dataset()
 
     #Sample dataset for testing:
-    raw_dataset = raw_dataset.shuffle(seed=42).select(range(2000))
-    print(raw_dataset)
+    #raw_dataset = raw_dataset.shuffle(seed=42).select(range(4000))
+    #print(raw_dataset)
 
     dataset = raw_dataset.train_test_split(test_size=0.1)
 
@@ -88,19 +88,6 @@ def mlm_train(checkpoint="distilbert-base-uncased",
             feature["labels"] = new_labels
         return default_data_collator(features)
 
-    #def tokenize_and_chunk(texts):
-    #    all_input_ids = []
-    #    for input_ids in tokenizer(texts["text"])["input_ids"]:
-    #        # Add input_ids to list
-    #        all_input_ids.extend(input_ids)
-    #        # Add EndOfSentence token to list
-    #        all_input_ids.append(tokenizer.eos_token_id)
-    #
-    #    chunks = []
-    #    for idx in range(0, len(all_input_ids), context_length):
-    #        chunks.append(all_input_ids[idx: idx + context_length])
-    #    return {"input_ids": chunks}
-
     tokenized_datasets = dataset.map(tokenize_function, batched=True,
             remove_columns=["essay"])
 
@@ -146,14 +133,17 @@ def mlm_train(checkpoint="distilbert-base-uncased",
             tokenizer=tokenizer,
             )
 
-    #eval_results = trainer.evaluate()
-    #print("Perplexity: ")
-    #print(math.exp(eval_results["eval_loss"]))
-    
+    eval_results = trainer.evaluate()
+    print("Perplexity: ")
+    perplex_b4 = math.exp(eval_results["eval_loss"]
+    print(perplex_b4)
+
     trainer.train()
 
     eval_results = trainer.evaluate()
-    print("Perplexity: ")
+    print("Perplexity before training:")
+    print(perplex_b4)
+    print("Perplexity after training: ")
     print(math.exp(eval_results["eval_loss"]))
     
     trainer.save_model(savepath)
