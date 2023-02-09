@@ -1,5 +1,5 @@
 from dataset_builder import all_essays_dataset 
-from trainer import TrainingArguments, Trainer
+from transformers import TrainingArguments, Trainer
 from transformers import AutoModelForMaskedLM, AutoTokenizer,\
 DataCollatorForLanguageModeling, default_data_collator
 from datasets import load_from_disk
