@@ -135,14 +135,14 @@ def mlm_train(checkpoint="distilbert-base-uncased",
 
     eval_results = trainer.evaluate()
     print("Perplexity: ")
-    perplex_b4 = math.exp(eval_results["eval_loss"]
-    print(perplex_b4)
+    0_perplex = math.exp(eval_results["eval_loss"])
+    print(0_perplex)
 
     trainer.train()
 
     eval_results = trainer.evaluate()
     print("Perplexity before training:")
-    print(perplex_b4)
+    print(0_perplex)
     print("Perplexity after training: ")
     print(math.exp(eval_results["eval_loss"]))
     
