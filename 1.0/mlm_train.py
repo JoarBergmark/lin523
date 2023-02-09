@@ -18,7 +18,7 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     
     # Kanske mindre för att spara på minne
-    chunk_size = 256 # tokenizer.model_max_length = 512
+    chunk_size = 128 # tokenizer.model_max_length = 512
     
     raw_dataset = all_essays_dataset()
 
