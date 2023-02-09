@@ -21,6 +21,11 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     chunk_size = 128 # tokenizer.model_max_length = 512
     
     raw_dataset = all_essays_dataset()
+
+    #Sample dataset for testing:
+    raw_dataset = raw_dataset.shuffle(seed=42).select(range(2000))
+    print(raw_dataset)
+
     dataset = raw_dataset.train_test_split(test_size=0.1)
 
     def tokenize_function(examples):
@@ -141,13 +146,12 @@ def mlm_train(checkpoint="distilbert-base-uncased",
             tokenizer=tokenizer,
             )
 
-    eval_results = trainer.evaluate()
-    print("Perplexity: ")
-    print(math.exp(eval_results["eval_loss"]))
+    #eval_results = trainer.evaluate()
+    #print("Perplexity: ")
+    #print(math.exp(eval_results["eval_loss"]))
     
-    quit()
     trainer.train()
-    
+
     eval_results = trainer.evaluate()
     print("Perplexity: ")
     print(math.exp(eval_results["eval_loss"]))
