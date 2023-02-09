@@ -90,6 +90,53 @@ def all_essays_dataset(path="../data/",
     dataset.save_to_disk(savepath)
     return dataset
 
+def dataset_unique_chars(path="../data/"):
+    """Returns a list of unique characters used in all_essays_dataset
+    """
+    unique_characters = set()
+
+    essay_df = pd.DataFrame() 
+    for filename in os.listdir(path):
+        if filename.endswith(".tsv"):
+            filepath = os.path.join(path, filename)
+            df = pd.read_csv(filepath, sep="\t", encoding="ISO-8859-1")
+            essay_df = pd.concat((essay_df, df[["essay", "essay_id"]]),
+                    ignore_index=True)
+    essay_df.sort_values(by="essay_id")
+    essay_df = essay_df[["essay"]]
+    print(len(essay_df))
+    all_text = "".join(essay_df["essay"])
+    unique_chars = list(set(all_text))
+    unique_chars.sort()
+
+    print(unique_chars)
+    with open("unique_chars.txt", "w", encoding="ISO-8859-1") as file:
+        for char in unique_chars:
+            file.write(char + "\n")
+
+def replace_characters(example):
+    """Returns a text with unusual characters replaced by common counterparts
+    """
+    output_text = example["text"]
+    codes_to_replace = {
+        "": "€",
+        "": "...",
+        "": "\'",
+        "": "\'",
+        "": "\"",
+        "": "\"",
+        "": "-",
+        "": "<",
+        "": ">",
+        "": "oe",
+        "": "",
+        "­": "-",
+        }
+    for code in codes_to_replace:
+        output_text = output_text.replace(code, codes_to_replace[code])
+    example["text"] = output_text
+    return example
+
 def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     """Extracts relevant rows and columns to a dataset object.
     Args:
@@ -112,6 +159,7 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
         df["labels"] = df["labels"] - 1
 
     current_data = Dataset.from_pandas(df).remove_columns(["__index_level_0__"])
+    current_data.map(replace_characters)
     # set_info used for creation of ClassLabel for each set.
     set_info = {
             1: range(2, 13),
@@ -134,4 +182,3 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     #sample = current_data.shuffle()
     #print(sample[:5]["labels"])
     return current_data
-
