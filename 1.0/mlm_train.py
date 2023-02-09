@@ -101,10 +101,16 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     lm_datasets = tokenized_datasets.map(group_texts, batched=True)
     
     samples = [lm_datasets["train"][i] for i in range(2)]
-    batch = whole_word_maskng_data_collator(samples)
+    batch = whole_word_masking_data_collator(samples)
     for chunk in batch["input_ids"]:
         print(f"\n'>>> {tokenizer.decode(chunk)}'")
 
+    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,
+            mlm_probability=0.2)
+    for sample in samples:
+        _ = samples.pop("word_ids")
+    for chunk in data_collator(samples)["input_ids"]:
+        print(f"\n'>>>{tokenizer.decode(chunk)}'")
 
     # Maybe replace with whole_word_masking_data_collator
     #data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,
