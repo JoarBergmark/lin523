@@ -20,8 +20,6 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     chunk_size = 512 # tokenizer.model_max_length = 512
     
     raw_dataset = all_essays_dataset()
-    print(raw_dataset)
-    # todo: splits for dataset
     dataset = raw_dataset.train_test_split(test_size=0.1)
 
     def tokenize_function(examples):
@@ -97,21 +95,23 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     #        chunks.append(all_input_ids[idx: idx + context_length])
     #    return {"input_ids": chunks}
 
-    tokenized_datasets = dataset.map(tokenize_function, batched=True, 
-            remove_columns=["essay"])
-    print("tokenized_datasets:")
-    print(tokenized_datasets)
+    tokenized_datasets = dataset.map(tokenize_function, batched=True)#, 
+            #remove_columns=["essay"])
 
     lm_datasets = tokenized_datasets.map(group_texts, batched=True)
-    print("lm_datasets")
-    print(lm_datasets)
     
+    samples = [lm_datasets["train"][i] for i in range(2)]
+    batch = whole_word_maskng_data_collator(samples)
+    for chunk in batch["input_ids"]:
+        print(f"\n'>>> {tokenizer.decode(chunk)}'")
+
+
     # Maybe replace with whole_word_masking_data_collator
     #data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,
     #        mlm_probability=0.15)
     
     #Trainer API
-    batch_size = 32
+    batch_size = 16
     # Report training loss every epoch
     logging_steps = len(lm_datasets["train"]) // batch_size
     # model_name = name for pushing to hub?
