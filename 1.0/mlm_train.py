@@ -107,9 +107,6 @@ def mlm_train(checkpoint="distilbert-base-uncased",
             tokenizer=tokenizer,
             )
 
-    print("training starts here")
-    quit()
-
     eval_results = trainer.evaluate()
     print("Perplexity: ")
     print(math.exp(eval_results["eval_loss"]))
