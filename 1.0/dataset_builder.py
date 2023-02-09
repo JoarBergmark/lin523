@@ -1,5 +1,6 @@
 import datasets
-from datasets import Dataset, DatasetDict, load_dataset, Features, ClassLabel
+from datasets import Dataset, DatasetDict, load_dataset, Features, ClassLabel,\
+load_from_disk
 import glob
 import os
 import pandas as pd
@@ -65,6 +66,29 @@ def create_folds(dataset, k=5):
             # Breaks loop to avoid creating unessecary folds.
             break
     return fold_list
+
+def all_essays_dataset(path="../data/",
+        savepath="../data/datasets/all_essays.data"):
+    """Returns dataset of all essays, builds and saves dataset in none exists.
+    Args:
+        path: path to saved .tsv files
+        savepath: savepath for dataset
+    """
+    if os.path.exists(savepath):
+        dataset = load_from_disk(savepath)
+        return dataset
+    essay_df = pd.DataFrame() 
+    for filename in os.listdir(path):
+        if filename.endswith(".tsv"):
+            filepath = os.path.join(path, filename)
+            df = pd.read_csv(filepath, sep="\t", encoding="ISO-8859-1")
+            essay_df = pd.concat((essay_df, df[["essay", "essay_id"]]),
+                    ignore_index=True)
+    essay_df.sort_values(by="essay_id")
+    essay_df = essay_df[["essay"]]
+    dataset = Dataset.from_pandas(essay_df)
+    dataset.save_to_disk(savepath)
+    return dataset
 
 def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     """Extracts relevant rows and columns to a dataset object.
