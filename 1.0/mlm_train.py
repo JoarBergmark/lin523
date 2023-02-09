@@ -52,6 +52,37 @@ def mlm_train(checkpoint="distilbert-base-uncased",
         # Labels will be the "correct results" for masked token predictions
         result["labels"] = result["input_ids"].copy()
         return result
+ 
+    def whole_word_masking_data_collator(features, wwm_probability=0.2):
+        """Data collator for whole word masking MLM.
+        Args:
+            features:
+            wwm_probability: share of words to be masked (default 20%)
+        """
+        for feature in features:
+            word_ids = feature.pop("word_ids")
+            # Create a map between words and corresponding token indices
+            mapping = collections.defaultdict(list)
+            current_word_index = -1
+            current_word = None
+            for idx, word_id in enumerate(word_ids):
+                if word_id is not None:
+                    if word_id != current_word:
+                        current_word = word_id
+                        current_word_index += 1
+                    mapping[current_word_index].append(idx)
+            # Mask words
+            mask = np.random.binomial(1, wwm_probability, (len(mapping)))
+            input_ids = feature["input_ids"]
+            labels = feature["labels"]
+            new_labels = [-100] * len(labels)
+            for word_id in np.where(mask)[0]:
+                word_id = word_id.item()
+                for idx in mapping[word_id]:
+                    new_labels[idx] = labels[idx]
+                    input_ids[idx] = tokenizer.mask_token_id
+            feature["labels"] = new_labels
+        return default_data_collator(features)
 
     #def tokenize_and_chunk(texts):
     #    all_input_ids = []
@@ -118,41 +149,8 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     print(math.exp(eval_results["eval_loss"]))
     
     trainer.save_model(savepath)
+    print("Model saved to: " + savepath)
     
-def whole_word_masking_data_collator(features, wwm_probability=0.2):
-    """Data collator for whole word masking MLM.
-    Args:
-        features:
-        wwm_probability: share of words to be masked (default 20%)
-    """
-
-    for feature in features:
-        word_ids = feature.pop("word_ids")
-        # Create a map between words and corresponding token indices
-        mapping = collections.defaultdict(list)
-        current_word_index = -1
-        current_word = None
-        for idx, word_id in enumerate(word_ids):
-            if word_id is not None:
-                if word_id != current_word:
-                    current_word = word_id
-                    current_word_index += 1
-                mapping[current_word_index].append(idx)
-        # Mask words
-        mask = np.random.binomial(1, wwm_probability, (len(mapping)))
-        input_ids = feature["input_ids"]
-        labels = feature["labels"]
-        new_labels = [-100] * len(labels)
-        for word_id in np.where(mask)[0]:
-            word_id = word_id.item()
-            for idx in mapping[word_id]:
-                new_labels[idx] = labels[idx]
-                input_ids[idx] = tokenizer.mask_token_id
-        feature["labels"] = new_labels
-    return default_data_collator(features)
-
-
-
 if __name__ == '__main__':
     # Run from command line
     mlm_train()
