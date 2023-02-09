@@ -6,6 +6,7 @@ from datasets import load_from_disk
 import torch
 import collections
 import numpy as np
+import math
 def mlm_train(checkpoint="distilbert-base-uncased",
         loadpath="../data/datasets/all_essays.data",
         savepath="../models/essay_mlm.model",):
