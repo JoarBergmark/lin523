@@ -66,8 +66,8 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     #        chunks.append(all_input_ids[idx: idx + context_length])
     #    return {"input_ids": chunks}
 
-    tokenized_datasets = dataset.map(tokenize_function, batched=True),
-        remove_columns=["text"])
+    tokenized_datasets = dataset.map(tokenize_function, batched=True, 
+            remove_columns=["text"])
     print(tokenized_datasets)
 
     lm_datasets = tokenized_datasets.map(group_texts, batched=True)
