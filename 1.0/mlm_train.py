@@ -18,7 +18,7 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     
     # Kanske mindre för att spara på minne
-    chunk_size = 512 # tokenizer.model_max_length = 512
+    chunk_size = 128 # tokenizer.model_max_length = 512
     
     raw_dataset = all_essays_dataset()
     dataset = raw_dataset.train_test_split(test_size=0.1)
@@ -145,6 +145,7 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     print("Perplexity: ")
     print(math.exp(eval_results["eval_loss"]))
     
+    quit()
     trainer.train()
     
     eval_results = trainer.evaluate()
