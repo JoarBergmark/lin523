@@ -22,12 +22,12 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     raw_dataset = all_essays_dataset()
     print(raw_dataset)
     # todo: splits for dataset
-    dataset = raw_dataset.train_test_split(test_size=0.15)
+    dataset = raw_dataset.train_test_split(test_size=0.1)
 
     def tokenize_function(examples):
         """Tokenize funciton for dataset.map()
         """
-        result = tokenizer(examples["text"])
+        result = tokenizer(examples["essay"])
         if tokenizer.is_fast:
             # Add word_ids to preserve words split by tokenizer
             result["word_ids"] = [result.word_ids(i) for i in
@@ -35,7 +35,7 @@ def mlm_train(checkpoint="distilbert-base-uncased",
         return result
 
     def group_texts(examples):
-        """Groups essays into chunks of chunk_length
+        """Groups tokenized essays into chunks of chunk_length
         """
         # Concatenate all the essays
         concatenated_examples = {k: sum(examples[k], []) for k in
@@ -67,10 +67,12 @@ def mlm_train(checkpoint="distilbert-base-uncased",
     #    return {"input_ids": chunks}
 
     tokenized_datasets = dataset.map(tokenize_function, batched=True, 
-            remove_columns=["text"])
+            remove_columns=["essay"])
+    print("tokenized_datasets:")
     print(tokenized_datasets)
 
     lm_datasets = tokenized_datasets.map(group_texts, batched=True)
+    print("lm_datasets")
     print(lm_datasets)
     
     # Maybe replace with whole_word_masking_data_collator
@@ -104,6 +106,10 @@ def mlm_train(checkpoint="distilbert-base-uncased",
             data_collator=whole_word_masking_data_collator,
             tokenizer=tokenizer,
             )
+
+    print("training starts here")
+    quit()
+
     eval_results = trainer.evaluate()
     print("Perplexity: ")
     print(math.exp(eval_results["eval_loss"]))
