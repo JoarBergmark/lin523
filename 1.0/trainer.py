@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from transformers import AdamW, get_scheduler
 from tqdm.auto import tqdm # For progress bar
 import evaluate
+import gc
 class trainer(object):
     """Trainer class for model initiation and training.
     """
@@ -58,7 +59,9 @@ class trainer(object):
                 num_training_steps=num_training_steps
                 )
         print("print(num_training_steps): " + str(num_training_steps))
-        
+        gc.collect()
+        torch.cuda.empty_cache()
+
         model.to(self.device)
         progress_bar = tqdm(range(num_training_steps))
         print("Training start:")
