@@ -116,6 +116,8 @@ def dataset_unique_chars(path="../data/"):
 
 def replace_characters(example):
     """Returns a text with unusual characters replaced by common counterparts
+    Args:
+        example: item in dataset
     """
     output_text = example["text"]
     codes_to_replace = {
@@ -133,6 +135,8 @@ def replace_characters(example):
         "­": "-",
         }
     for code in codes_to_replace:
+        if code in output_text:
+            print("Replaced " + code + " with " + codes_to_replace[code])
         output_text = output_text.replace(code, codes_to_replace[code])
     example["text"] = output_text
     return example
@@ -152,6 +156,9 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
         "domain1_score": "labels",
         "essay_id": "idx"
         })
+    df["text"] = df["text"].apply(replace_characters)
+
+    for 
     # Decrement label for set 1, 2 to avoid label > num_labels in ClassLabel
     if set_no == 1:
         df["labels"] = df["labels"] - 2
@@ -159,7 +166,7 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
         df["labels"] = df["labels"] - 1
 
     current_data = Dataset.from_pandas(df).remove_columns(["__index_level_0__"])
-    current_data.map(replace_characters)
+    
     # set_info used for creation of ClassLabel for each set.
     set_info = {
             1: range(2, 13),
