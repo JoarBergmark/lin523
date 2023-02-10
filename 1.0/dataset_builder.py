@@ -137,7 +137,7 @@ def replace_characters(example):
         "­": "-", #The first hyphen is a different character.
         }
     for code in codes_to_chars:
-        replacements[code + "/" + codes_to_chars[code]] = output_text.count(code)
+        no_replacements[code+"/"+codes_to_chars[code]] = output_text.count(code)
         if no_replacements[code + "/" + codes_to_chars[code]] > 0:
             output_text = output_text.replace(code, codes_to_chars[code])
     return (output_text, no_replacements)
