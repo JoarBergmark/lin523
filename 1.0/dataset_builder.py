@@ -117,9 +117,9 @@ def dataset_unique_chars(path="../data/"):
 def replace_characters(example):
     """Returns a text with unusual characters replaced by common counterparts
     Args:
-        example: item in dataset
+        example: string
     """
-    output_text = example["text"]
+    output_text = example
     codes_to_replace = {
         "": "€",
         "": "...",
@@ -138,8 +138,7 @@ def replace_characters(example):
         if code in output_text:
             print("Replaced " + code + " with " + codes_to_replace[code])
         output_text = output_text.replace(code, codes_to_replace[code])
-    example["text"] = output_text
-    return example
+    return output_text
 
 def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     """Extracts relevant rows and columns to a dataset object.
