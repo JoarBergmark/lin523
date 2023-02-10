@@ -157,8 +157,7 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
         "essay_id": "idx"
         })
     df["text"] = df["text"].apply(replace_characters)
-
-    for 
+ 
     # Decrement label for set 1, 2 to avoid label > num_labels in ClassLabel
     if set_no == 1:
         df["labels"] = df["labels"] - 2
