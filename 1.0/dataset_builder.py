@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
+from collections import Counter
 
 def dataset_builder(set_no, path="../data/training_set_rel3.tsv",
         savepath="../data/datasets/", folded=5):
@@ -14,7 +15,7 @@ def dataset_builder(set_no, path="../data/training_set_rel3.tsv",
     Args:
         path: path to .tsv-file locations
         savepath: path to save the dataset objects
-
+        folded: number of folds (default 5)
     """
     set_dataset = data_from_csv(set_no, path)
     set_dataset.shuffle()
@@ -91,7 +92,7 @@ def all_essays_dataset(path="../data/",
     return dataset
 
 def dataset_unique_chars(path="../data/"):
-    """Returns a list of unique characters used in all_essays_dataset
+    """Returns, and saves, a list of unique characters used in all_essays_dataset
     """
     unique_characters = set()
 
@@ -115,12 +116,13 @@ def dataset_unique_chars(path="../data/"):
             file.write(char + "\n")
 
 def replace_characters(example):
-    """Returns a text with unusual characters replaced by common counterparts
+    """Replaces unusual characters with common counterparts, returns text+count
     Args:
         example: string
     """
     output_text = example
-    codes_to_replace = {
+    no_replacements = Counter()
+    codes_to_chars = {
         "": "€",
         "": "...",
         "": "\'",
@@ -132,13 +134,13 @@ def replace_characters(example):
         "": ">",
         "": "oe",
         "": "",
-        "­": "-",
+        "­": "-", #The first hyphen is a different character.
         }
-    for code in codes_to_replace:
-        if code in output_text:
-            print("Replaced " + code + " with " + codes_to_replace[code])
-        output_text = output_text.replace(code, codes_to_replace[code])
-    return output_text
+    for code in codes_to_chars:
+        replacements[code + "/" + codes_to_chars[code]] = output_text.count(code)
+        if no_replacements[code + "/" + codes_to_chars[code]] > 0:
+            output_text = output_text.replace(code, codes_to_chars[code])
+    return (output_text, no_replacements)
 
 def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
     """Extracts relevant rows and columns to a dataset object.
@@ -155,7 +157,13 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
         "domain1_score": "labels",
         "essay_id": "idx"
         })
-    df["text"] = df["text"].apply(replace_characters)
+    # Replace uncommon characters with common ones and print replacements
+    replacement_counts = Counter()
+    for text in df["text"]:
+        update = replace_characters(text)
+        text = update[0]
+        replacement_counts = replacement_counts + update[1]
+    print(replacement_counts)
  
     # Decrement label for set 1, 2 to avoid label > num_labels in ClassLabel
     if set_no == 1:
