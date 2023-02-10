@@ -16,7 +16,7 @@ class trainer(object):
         self.epochs = epochs
         self.device = torch.device("cuda") if torch.cuda.is_available()\
                 else torch.device("cpu")
-        print("torch.device = " + self.device)
+        print("torch.device = " + str(self.device))
     def tokenize_function(self, essay):
         return self.tokenizer(essay["text"], truncation=True)
 
