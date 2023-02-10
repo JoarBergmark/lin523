@@ -10,7 +10,7 @@ from sklearn.model_selection import StratifiedKFold
 def dataset_builder(set_no, path="../data/training_set_rel3.tsv",
         savepath="../data/datasets/", folded=5):
     """Loads data from .tsv-file and saves a DatasetDict object with the
-    specified set of essays.
+    specified set of essays
     Args:
         path: path to .tsv-file locations
         savepath: path to save the dataset objects
