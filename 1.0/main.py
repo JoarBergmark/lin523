@@ -21,6 +21,8 @@ def main(loadpath="../data/datasets/", epochs=5,
         savepath: directory to save fold-models
         overwrite: set True to make new models even if previous exist
     """
+    if not os.path.exists("../models/essay_mlm.model"):
+        mlm_train()
     sets = [3,4,5,6,7] # Only using sets 3-7 since they fit within model size
     for essay_set in sets:
         model_savepath = savepath + "set" + str(essay_set) + "/"
