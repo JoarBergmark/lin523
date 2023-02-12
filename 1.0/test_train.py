@@ -55,7 +55,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             print("Model created and saved.")
 
         print("Not crashed yet")
-        quit()
 
         # Make predictions of test data essays
         predictor = TextClassificationPipeline(
@@ -71,6 +70,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             true_score = essay["labels"]
             current = (essay_id, expected_score, true_score)
             predictions.append(current)
+        print("Not crashed 2")
+        quit()
 
     predictions.sort()
     df = pd.DataFrame(predictions, columns=["essay_id", "prediction",
