@@ -43,7 +43,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             print("Dataset created and loaded!")
         
         test_data = dataset["test"]
-        model_trainer = trainer(dataset, filename=(filename + ".model"),
+        model_trainer = trainer(dataset, (filename + ".model"),
                 epochs=epochs, checkpoint="../models/essay_model.model")
         new_predictions = model_trainer.train()
         predictions = predicitons + new_predictions
