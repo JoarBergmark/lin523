@@ -1,4 +1,4 @@
-6rom trainer import trainer
+from trainer import trainer
 from dataset_builder import dataset_builder
 from datasets import load_from_disk
 import os
@@ -61,15 +61,9 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             top_k=1)
         for essay in dataset["test"]:
             essay_id = essay["idx"]
-            print("**EXPECTED_SCORE**:")
-            print(predictor(essay["text"]))
-            print(predictor(essay["text"])[0][0]["label"])
-            print(predictor(essay["text"])[0][0]["label"][5:])
+            expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
             # predictor(essay["text"]):
             # [[{'label': 'LABEL1', 'score': 0.95}]]
-            print(essay["labels"])
-
-            expected_score = int(predictor(essay["text"])[0][0]["label"][5:])
             true_score = essay["labels"]  
             predictions.append(tuple(essay_id, expected_score, true_score))
 
