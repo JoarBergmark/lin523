@@ -7,9 +7,10 @@ import torch
 import collections
 import numpy as np
 import math
-def mlm_train(checkpoint="distilbert-base-uncased",
+def mlm_train(checkpoint="distilbert-base-cased",
         loadpath="../data/datasets/all_essays.data",
-        savepath="../models/essay_mlm.model",):
+        savepath="../models/essay_mlm.model",
+        epochs=5):
     """
     Args:
         
@@ -118,7 +119,7 @@ def mlm_train(checkpoint="distilbert-base-uncased",
             per_device_train_batch_size=batch_size,
             per_device_eval_batch_size=batch_size,
             fp16=True,
-            num_train_epochs=3,
+            num_train_epochs=epochs,
             logging_steps=logging_steps,
             remove_unused_columns=False, # To save word_ids column
             #Maybe for saving along the way: save_steps=5000,
