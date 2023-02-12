@@ -54,7 +54,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             model = model_trainer.train()
             print("Model created and saved.")
 
-        print("Not crashed yet")
 
         # Make predictions of test data essays
         predictor = TextClassificationPipeline(
@@ -70,8 +69,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             true_score = essay["labels"]
             current = (essay_id, expected_score, true_score)
             predictions.append(current)
-        print("Not crashed 2")
-        quit()
 
     predictions.sort()
     df = pd.DataFrame(predictions, columns=["essay_id", "prediction",
@@ -88,6 +85,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         file.write("Kappa: " + str(kappa))
     print("results saved to: " + result_file)
 
+            
 def analyze_predictions(df):
     correct = 0
     total = len(df)
