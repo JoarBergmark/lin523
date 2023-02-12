@@ -87,7 +87,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         for i in range(len(expected_scores)):
             current = (essay_ids[i], expected_scores[i], true_scores[i])
             predictions.append(current)
-            print(current)
 
         #for essay in dataset["test"]:
         #    essay_id = essay["idx"]
