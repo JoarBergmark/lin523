@@ -17,7 +17,7 @@ def train(loadpath="../data/datasets/", epochs=5,
                 savepath=model_savepath)
 
 def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
-        savepath="../models/", overwrite=False, epochs=5):
+        savepath="../models/", overwrite=False, epochs=5, batch=4):
     """Trains multiple models for cross fold validation, print and saves results.
     Args:
         set_no: essay_set number
@@ -44,7 +44,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         
         test_data = dataset["test"]
         model_trainer = trainer(dataset, (filename + ".model"),
-                epochs=epochs, checkpoint="../models/essay_mlm.model")
+                epochs=epochs, checkpoint="../models/essay_mlm.model",
+                batch_size=batch)
         new_predictions = model_trainer.train()
         predictions = predicitons + new_predictions
     predictions.sort()

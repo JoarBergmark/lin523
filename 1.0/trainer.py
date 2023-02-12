@@ -10,12 +10,13 @@ class trainer(object):
     """Trainer class for model initiation and training.
     """
     def __init__(self, dataset, savepath, model_save="../models/essay_mlm.model",
-            checkpoint="distilbert-base-cased", epochs=3):
+            checkpoint="distilbert-base-cased", epochs=5, batch_size=4):
         self.dataset = dataset
         self.model_save = model_save
         self.checkpoint = checkpoint
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         self.epochs = epochs
+        self.batch_size = batch_size
         self.device = torch.device("cuda") if torch.cuda.is_available()\
                 else torch.device("cpu")
         print("torch.device = " + str(self.device))
@@ -31,14 +32,14 @@ class trainer(object):
         tokenized_datasets = tokenized_datasets.remove_columns(["text", "idx"])
         tokenized_datasets.set_format("torch")
 
-        #print(tokenized_datasets["train"].column_names)
-        # ["labels", "input_ids", "attention_mask"]
-        
         train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True,
-                batch_size=8, collate_fn=data_collator
+                batch_size=self.batch_size,
+                collate_fn=data_collator
                 )
         eval_dataloader = DataLoader(tokenized_datasets["validation"],
-                shuffle=True, batch_size=8, collate_fn=data_collator
+                shuffle=True,
+                batch_size=self.batch_size, 
+                collate_fn=data_collator
                 )
 
         # batch structure:
