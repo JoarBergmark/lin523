@@ -9,7 +9,7 @@ import gc
 class trainer(object):
     """Trainer class for model initiation and training.
     """
-    def __init__(self, dataset, checkpoint="distilbert-base-uncased", epochs=3):
+    def __init__(self, dataset, savepath, checkpoint="distilbert-base-uncased", epochs=3):
         self.dataset = dataset
         self.checkpoint = checkpoint
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
@@ -24,6 +24,7 @@ class trainer(object):
         tokenized_datasets = self.dataset.map(self.tokenize_function,
                 batched=True
                 )
+        test_data = self.dataset["test"]
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
         tokenized_datasets = tokenized_datasets.remove_columns(["text", "idx"])
         tokenized_datasets.set_format("torch")
@@ -86,7 +87,17 @@ class trainer(object):
             print("\n")
 
         print("Training Finished!")
-        print("Saving model not implemented.")
+        model.save_pretrained(savepath)
+        # Make predictions of test data essays
+        predictor = TextClassificationPipeline(model=mdoel, tokenizer=tokenizer,
+                return_all_scores=True)
+        predictions = []
+        for essay in test_dataset:
+            essay_id = essay["idx"]
+            expected_score = predictor(essay["text"])["label"]
+            true_score = essay["labels"]  
+            predictions.append(essay_id, expected_score, true_score)
+        return predictions
 
     def evaluate(self, model, eval_dataloader):
         metric1 = evaluate.load("f1")
