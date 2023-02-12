@@ -12,6 +12,7 @@ class trainer(object):
     def __init__(self, dataset, savepath, model_save="../models/essay_mlm.model",
             checkpoint="distilbert-base-cased", epochs=5, batch_size=4):
         self.dataset = dataset
+        self.savepath = savepath
         self.model_save = model_save
         self.checkpoint = checkpoint
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
@@ -90,7 +91,7 @@ class trainer(object):
             print("\n")
 
         print("Training Finished!")
-        model.save_pretrained(savepath)
+        model.save_pretrained(self.savepath)
         # Make predictions of test data essays
         predictor = TextClassificationPipeline(model=mdoel, tokenizer=tokenizer,
                 return_all_scores=True)
