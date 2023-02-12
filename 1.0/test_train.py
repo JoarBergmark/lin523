@@ -8,13 +8,8 @@ import numpy as np
 from sklearn.metrics import cohen_kappa_score
 def train(set_no, loadpath="../data/datasets/", epochs=5,
         savepath="../models/set"):
-    filename = loadpath + "set" + str(set_no) + ".data"
-    print("filename: " + filename)
-    dataset = load_from_disk(filename)
-    model_trainer = trainer(dataset, epochs=epochs)
-    model_trainer.train()
-    print("Training finished in test_train")
-
+    """
+    """
     sets = [3,4,5,6,7]
     for essay_set in sets:
         model_savepath = savepath + str(essay_set) + "/"
