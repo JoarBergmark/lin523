@@ -12,7 +12,7 @@ class trainer(object):
     def __init__(self, dataset, savepath, checkpoint="distilbert-base-cased", epochs=3):
         self.dataset = dataset
         self.checkpoint = checkpoint
-        self.tokenizer = AutoTokenizer.from_pretrained("distilbert_base_cased")
+        self.tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
         self.epochs = epochs
         self.device = torch.device("cuda") if torch.cuda.is_available()\
                 else torch.device("cpu")
