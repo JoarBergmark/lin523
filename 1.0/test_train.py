@@ -31,20 +31,20 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
     predictions = []
     for fold in folds:
         print("Set: " + str(set_no) + ", fold: " + str(fold))
-        filename = loadpath + "set" + str(set_no) + "/fold" + str(fold) + ".data"
-        print("Loading " + filename)
-        print("Filepath found: " + str(os.path.exists(filename)))
-        if os.path.exists(filename):
-            dataset = load_from_disk(filename)
+        filename = loadpath + "set" + str(set_no) + "/fold" + str(fold)
+        print("Loading " + filename + ".data")
+        print("Filepath found: " + str(os.path.exists(filename + ".data")))
+        if os.path.exists(filename + ".data"):
+            dataset = load_from_disk(filename + ".data")
             print("Dataset loaded!")
         else:
             dataset_builder(set_no)
-            dataset = load_from_disk(filename)
+            dataset = load_from_disk(filename + ".data")
             print("Dataset created and loaded!")
         
         test_data = dataset["test"]
-        model_trainer = trainer(dataset, epochs=epochs,
-                checkpoint="../models/essay_model.model")
+        model_trainer = trainer(dataset, filename=(filename + ".model"),
+                epochs=epochs, checkpoint="../models/essay_model.model")
         new_predictions = model_trainer.train()
         predictions = predicitons + new_predictions
     predictions.sort()
