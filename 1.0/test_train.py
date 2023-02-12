@@ -58,10 +58,12 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         predictor = TextClassificationPipeline(
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
-            return_all_scores = True)
+            top_k=1)
         for essay in dataset["test"]:
             essay_id = essay["idx"]
-            expected_score = predictor(essay["text"])["label"]
+            print("**EXPECTED_SCORE**:")
+            print(predictor(essay["text"]))
+            expected_score = predictor(essay["text"])
             true_score = essay["labels"]  
             predictions.append(essay_id, expected_score, true_score)
 
