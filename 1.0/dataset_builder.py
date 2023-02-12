@@ -192,7 +192,4 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
                 names=list(map(str, this_set))
                 )
             )
-    #print(current_data.features)
-    #sample = current_data.shuffle()
-    #print(sample[:5]["labels"])
     return current_data
