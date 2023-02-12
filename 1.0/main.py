@@ -71,13 +71,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
                     else torch.device("cpu")
             )
 
-        #def tokenize_function(example):
-        #    return tokenizer(essay["text"], truncation=True)
-        
-        #for out in predictor(KeyDataset(dataset["test"], "text"), batch_size=8,
-        #    truncation=True):
-        
-        
             # predictor(essay["text"]):
             # [{'label': 'LABEL1', 'score': 0.95}]
         expected_scores = [int(out[0]["label"][6:]) for out in predictor(
@@ -88,14 +81,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             current = (essay_ids[i], expected_scores[i], true_scores[i])
             predictions.append(current)
 
-        #for essay in dataset["test"]:
-        #    essay_id = essay["idx"]
-        #    expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
-            # predictor(essay["text"]):
-            # [[{'label': 'LABEL1', 'score': 0.95}]]
-        #    true_score = essay["labels"]
-        #    current = (essay_id, expected_score, true_score)
-        #    predictions.append(current)
         print("Fold " + str(fold) + " finished.")
 
     predictions.sort()
