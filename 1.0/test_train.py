@@ -3,6 +3,8 @@ from dataset_builder import dataset_builder
 from datasets import load_from_disk
 import os
 import sys
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import TextClassificationPipeline
 import pandas as pd
 import numpy as np
 from sklearn.metrics import cohen_kappa_score
@@ -42,12 +44,27 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             dataset = load_from_disk(filename + ".data")
             print("Dataset created and loaded!")
         
-        test_data = dataset["test"]
-        model_trainer = trainer(dataset, (filename + ".model"),
-                epochs=epochs, checkpoint="../models/essay_mlm.model",
-                batch_size=batch_size)
-        new_predictions = model_trainer.train()
-        predictions = predicitons + new_predictions
+        filename = filename + ".model"
+        if os.path.exists(filename):
+            model = AutoModelForSequenceClassification.from_pretrained(filename)
+            print("Model loaded from disk.")
+        else:
+            model_trainer = trainer(dataset, filename, epochs=epochs,
+                    model_save=filename, batch_size=batch_size)
+            model = model_trainer.train()
+            print("Model created and saved.")
+
+        # Make predictions of test data essays
+        predictor = TextClassificationPipeline(
+                model = model,
+                tokenizer = AutoTokenizer("distilbert-base-cased"),
+                return_all_scores = True)
+        for essay in dataset["test"]:
+            essay_id = essay["idx"]
+            expected_score = predictor(essay["text"])["label"]
+            true_score = essay["labels"]  
+            predictions.append(essay_id, expected_score, true_score)
+
     predictions.sort()
     df = pd.DataFrame(predictions, columns=["essay_id", "prediction",
         "true_score"])

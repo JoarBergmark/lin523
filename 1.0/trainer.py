@@ -93,16 +93,7 @@ class trainer(object):
 
         print("Training Finished!")
         model.save_pretrained(self.savepath)
-        # Make predictions of test data essays
-        predictor = TextClassificationPipeline(model=mdoel, tokenizer=tokenizer,
-                return_all_scores=True)
-        predictions = []
-        for essay in test_dataset:
-            essay_id = essay["idx"]
-            expected_score = predictor(essay["text"])["label"]
-            true_score = essay["labels"]  
-            predictions.append(essay_id, expected_score, true_score)
-        return predictions
+        return model 
 
     def evaluate(self, model, eval_dataloader):
         metric1 = evaluate.load("f1")
