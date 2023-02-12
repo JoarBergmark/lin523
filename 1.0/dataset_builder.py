@@ -19,7 +19,6 @@ def dataset_builder(set_no, path="../data/training_set_rel3.tsv",
     """
     set_dataset = data_from_csv(set_no, path)
     set_dataset.shuffle()
-    print("Data loaded")
     if folded > 1: 
         kfolds = create_folds(set_dataset)
         for num, folds in enumerate(kfolds):

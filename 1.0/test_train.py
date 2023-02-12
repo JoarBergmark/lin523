@@ -14,7 +14,7 @@ def train(loadpath="../data/datasets/", epochs=5,
         savepath="../models/set"):
     """
     """
-    sets = [3,4,7] # Only using sets 3-7 since they fit within model size
+    sets = [3,4,5,6,7] # Only using sets 3-7 since they fit within model size
     for essay_set in sets:
         model_savepath = savepath + str(essay_set) + "/"
         train_folds(essay_set, loadpath=loadpath, epochs=epochs,
@@ -29,7 +29,6 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         print("Set: " + str(set_no) + ", fold: " + str(fold))
         filename = loadpath + "set" + str(set_no) + "/fold" + str(fold) +".data"
         print("Loading " + filename)
-        print("Filepath found: " + str(os.path.exists(filename)))
         if os.path.exists(filename):
             dataset = load_from_disk(filename)
             print("Dataset loaded from disk.")
