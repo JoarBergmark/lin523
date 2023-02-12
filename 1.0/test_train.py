@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 import numpy as np
 from sklearn.metrics import cohen_kappa_score
-def train(set_no, loadpath="../data/datasets/", epochs=5,
+def train(loadpath="../data/datasets/", epochs=5,
         savepath="../models/set"):
     """
     """
@@ -78,7 +78,4 @@ def analyze_predictions(df):
             
 if __name__ == '__main__':
     # Run fold_train from command line
-    print(sys.argv) 
-    #args =  for arg in len(sys.argv) - 1
-    if sys.argv[1] == "train":
-        train(sys.argv[2])
+    train()
