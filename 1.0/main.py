@@ -76,8 +76,11 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         
         #for out in predictor(KeyDataset(dataset["test"], "text"), batch_size=8,
         #    truncation=True):
-
-        expected_scores = [out[0]["label"][6:] for out in predictor(
+        
+        
+            # predictor(essay["text"]):
+            # [{'label': 'LABEL1', 'score': 0.95}]
+        expected_scores = [int(out[0]["label"][6:]) for out in predictor(
             KeyDataset(dataset["test"], "text"), batch_size=8, truncation=True)]
         true_scores = [int(label) for label in dataset["test"]["labels"]]
         essay_ids = [int(idx) for idx in dataset["test"]["idx"]]
