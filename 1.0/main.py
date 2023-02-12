@@ -6,6 +6,7 @@ import os
 import sys
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import TextClassificationPipeline
+from transformers.pipelines.pt_utils import KeyDataset
 import torch
 import pandas as pd
 import numpy as np
