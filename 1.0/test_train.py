@@ -87,6 +87,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
 def analyze_predictions(df):
     correct = 0
     total = len(df)
+    print(df)
+    quit()
     for index, row in df.iterrows():
         if row["prediction"] == row["true_result"]:
             correct += 1
