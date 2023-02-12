@@ -21,14 +21,6 @@ def train(loadpath="../data/datasets/", epochs=5,
 def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         savepath="../models/", overwrite=False, epochs=5, batch_size=4):
     """Trains multiple models for cross fold validation, print and saves results.
-    Args:
-        set_no: essay_set number
-        folds: list of which folds to evaluate
-        loadpath: path to dataset directory
-        savepath: path to model save directory
-        overwrite: if previously saved models should be replaced
-        epochs: number of epochs to train model
-
     """
     predictions = []
     for fold in folds:
@@ -60,7 +52,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
             top_k=1
-            )
+            ).to("cuda")
         for essay in dataset["test"]:
             essay_id = essay["idx"]
             expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
@@ -69,6 +61,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             true_score = essay["labels"]
             current = (essay_id, expected_score, true_score)
             predictions.append(current)
+        print("Fold " + str(fold) + " finished.")
 
     predictions.sort()
     df = pd.DataFrame(predictions, columns=["essay_id", "prediction",
