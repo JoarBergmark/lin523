@@ -33,23 +33,23 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
     predictions = []
     for fold in folds:
         print("Set: " + str(set_no) + ", fold: " + str(fold))
-        filename = loadpath + "set" + str(set_no) + "/fold" + str(fold)
-        print("Loading " + filename + ".data")
-        print("Filepath found: " + str(os.path.exists(filename + ".data")))
-        if os.path.exists(filename + ".data"):
-            dataset = load_from_disk(filename + ".data")
+        filename = loadpath + "set" + str(set_no) + "/fold" + str(fold) +".data"
+        print("Loading " + filename)
+        print("Filepath found: " + str(os.path.exists(filename)))
+        if os.path.exists(filename):
+            dataset = load_from_disk(filename)
             print("Dataset loaded!")
         else:
             dataset_builder(set_no)
-            dataset = load_from_disk(filename + ".data")
+            dataset = load_from_disk(filename)
             print("Dataset created and loaded!")
         
-        filename = filename + ".model"
-        if os.path.exists(filename):
-            model = AutoModelForSequenceClassification.from_pretrained(filename)
+        m_file = savepath + "set" + str(set_no) + "/fold" + str(fold) + ".model"
+        if os.path.exists(m_file):
+            model = AutoModelForSequenceClassification.from_pretrained(m_file)
             print("Model loaded from disk.")
         else:
-            model_trainer = trainer(dataset, filename, epochs=epochs,
+            model_trainer = trainer(dataset, m_file, epochs=epochs,
                     model_save=filename, batch_size=batch_size)
             model = model_trainer.train()
             print("Model created and saved.")
@@ -58,7 +58,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         predictor = TextClassificationPipeline(
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
-            top_k=1)
+            top_k=1
+            )
         for essay in dataset["test"]:
             essay_id = essay["idx"]
             expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
