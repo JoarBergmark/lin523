@@ -8,6 +8,7 @@ from transformers import TextClassificationPipeline
 import torch
 import pandas as pd
 import numpy as np
+import sklearn
 from sklearn.metrics import cohen_kappa_score
 def train(loadpath="../data/datasets/", epochs=5,
         savepath="../models/set"):
