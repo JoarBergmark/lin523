@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import DataCollatorWithPadding
+from transformers import TextClassificationPipeline
 import torch
 from torch.utils.data import DataLoader
 from transformers import AdamW, get_scheduler

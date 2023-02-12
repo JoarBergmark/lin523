@@ -13,12 +13,8 @@ def train(loadpath="../data/datasets/", epochs=5,
     sets = [3,4,5,6,7]
     for essay_set in sets:
         model_savepath = savepath + str(essay_set) + "/"
-        if essay_set == 3:
-            batch_size = 4
-        else:
-            batch_size = 8
         train_folds(essay_set, loadpath=loadpath, epochs=epochs,
-                savepath=model_savepath, batch_size=batch_size)
+                savepath=model_savepath)
 
 def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         savepath="../models/", overwrite=False, epochs=5, batch_size=4):
