@@ -36,7 +36,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             dataset_builder(set_no)
             dataset = load_from_disk(filename)
             print("Dataset created and saved.")
-
+        # If trained model already exists
         m_file = savepath + "set" + str(set_no) + "/fold" + str(fold) + ".model"
         if os.path.exists(m_file):
             model = AutoModelForSequenceClassification.from_pretrained(m_file)
@@ -53,8 +53,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
             top_k=1,
-            device = torch.device("cuda:0") if torch.cuda.is_available()\
-                    else torch.device("cpu")
+            device = torch.device("cuda:0")# if torch.cuda.is_available()\
+                    #else torch.device("cpu")
             )
         
         for essay in dataset["test"]:

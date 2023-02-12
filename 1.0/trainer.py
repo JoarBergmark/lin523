@@ -27,17 +27,19 @@ class trainer(object):
 
     def train(self):
         tokenized_datasets = self.dataset.map(self.tokenize_function,
-                batched=True
                 )
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
         tokenized_datasets = tokenized_datasets.remove_columns(["text", "idx"])
         tokenized_datasets.set_format("torch")
 
-        train_dataloader = DataLoader(tokenized_datasets["train"], shuffle=True,
+        train_dataloader = DataLoader(
+                tokenized_datasets["train"],
+                shuffle=True,
                 batch_size=self.batch_size,
                 collate_fn=data_collator
                 )
-        eval_dataloader = DataLoader(tokenized_datasets["validation"],
+        eval_dataloader = DataLoader(
+                tokenized_datasets["validation"],
                 shuffle=True,
                 batch_size=self.batch_size, 
                 collate_fn=data_collator
