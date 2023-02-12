@@ -52,9 +52,9 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
             top_k=1,
-            device="cuda",
+            device=torch.device("cuda"),
             )
-        #for out in predictor(KeyDataset(dataset["test"], "text"), batch_size=8)
+        #for out in predictor(KeyDataset(dataset["test"], "text"),batch_size=8):
             
         for essay in dataset["test"]:
             essay_id = essay["idx"]
