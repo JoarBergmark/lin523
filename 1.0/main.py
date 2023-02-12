@@ -75,7 +75,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         #    return tokenizer(essay["text"], truncation=True)
         
         expected_scores = [out[0][0]["label"][6:] for out in predictor(
-            KeyDataset(dataset, "text"), batch_size=8, truncation=True)]
+            KeyDataset(dataset["test"], "text"), batch_size=8, truncation=True)]
         true_scores = [int(label) for label in dataset["test"]["labels"]]
         essay_ids = [int(idx) for idx in dataset["test"]["idx"]]
         for i in range(len(expected_scores)):
