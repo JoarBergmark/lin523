@@ -51,15 +51,14 @@ class trainer(object):
         torch.cuda.empty_cache()
         model.to(self.device)
 
-        #First one used
-        #optimizer = AdamW(model.parameters(), lr=5e-5)
+        optimizer = AdamW(model.parameters(), lr=5e-5)
         
         #optimizer = torch.optim.AdamW(model.parameters)
 
         num_training_steps = self.epochs * len(train_dataloader)
         lr_scheduler = get_scheduler(
                 "linear",
-                #optimizer=optimizer,
+                optimizer=optimizer,
                 num_warmup_steps=0,
                 num_training_steps=num_training_steps
                 )
