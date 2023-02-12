@@ -10,8 +10,20 @@ import gc
 class trainer(object):
     """Trainer class for model initiation and training.
     """
+    # this was created as for the same trainer object to be used for every fold
+    # training, but wierd memory issues had me make a new trainer for each
+    # instance.
     def __init__(self, dataset, savepath, model_save="../models/essay_mlm.model",
             checkpoint="distilbert-base-cased", epochs=5, batch_size=4):
+        """
+        Args:
+            dataset: dataset for training
+            savepath: savepath for trained model
+            model_save: directory for fine-tuned MLM
+            checkpoint: base model, used for retriewing tokenizer
+            epochs: number of epochs for training
+            batch_size: number of essays per batch
+        """
         self.dataset = dataset
         self.savepath = savepath
         self.model_save = model_save
@@ -23,9 +35,13 @@ class trainer(object):
                 else torch.device("cpu")
         print("torch.device = " + str(self.device))
     def tokenize_function(self, essay):
+        """tokenize function for dataset.map()
+        """
         return self.tokenizer(essay["text"], truncation=True)
 
     def train(self):
+        """Trains a model and saves trained model
+        """
         tokenized_datasets = self.dataset.map(self.tokenize_function,
                 )
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
@@ -93,6 +109,8 @@ class trainer(object):
         return model 
 
     def evaluate(self, model, eval_dataloader):
+        """Gets evaluations for each epoch
+        """
         metric1 = evaluate.load("f1")
         metric2 = evaluate.load("accuracy")
         # Set model to evaluation mode

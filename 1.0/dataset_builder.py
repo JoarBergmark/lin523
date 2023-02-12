@@ -110,7 +110,7 @@ def dataset_unique_chars(path="../data/"):
     unique_chars.sort()
 
     print(unique_chars)
-    with open("unique_chars.txt", "w", encoding="ISO-8859-1") as file:
+    with open("../info/unique_chars.txt", "w", encoding="ISO-8859-1") as file:
         for char in unique_chars:
             file.write(char + "\n")
 

@@ -10,26 +10,38 @@ import pandas as pd
 import numpy as np
 import sklearn
 from sklearn.metrics import cohen_kappa_score
-def train(loadpath="../data/datasets/", epochs=5,
-        savepath="../models/set"):
-    """
+def main(loadpath="../data/datasets/", epochs=5,
+        savepath="../models/", overwrite=False):
+    """Trains the a fine-tuned MLM for AES using cross validation
+    Args:
+        loadpath: directory for datasets
+        epochs: number of epochs for training
+        savepath: directory to save fold-models
+        overwrite: set True to make new models even if previous exist
     """
     sets = [3,4,5,6,7] # Only using sets 3-7 since they fit within model size
     for essay_set in sets:
-        model_savepath = savepath + str(essay_set) + "/"
+        model_savepath = savepath + "set" + str(essay_set) + "/"
         train_folds(essay_set, loadpath=loadpath, epochs=epochs,
                 savepath=model_savepath)
 
 def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         savepath="../models/", overwrite=False, epochs=5, batch_size=4):
-    """Trains multiple models for cross fold validation, print and saves results.
+    """Trains multiple models for cross fold validation, saves results
+    args:
+        set_no: current set to train
+        folds: folds to train, can be modified to run a single fold
+        loadpath: directory for fold datasets
+        overwrite: set True to make new models even if previous exist
+        epochs: number of epochs for training
+        batch_size: batch size for training, modify if running out
     """
     predictions = []
     for fold in folds:
         print("Set: " + str(set_no) + ", fold: " + str(fold))
         filename = loadpath + "set" + str(set_no) + "/fold" + str(fold) +".data"
         print("Loading " + filename)
-        if os.path.exists(filename):
+        if os.path.exists(filename) and overwrite == False:
             dataset = load_from_disk(filename)
             print("Dataset loaded from disk.")
         else:
@@ -47,24 +59,35 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             model = model_trainer.train()
             print("Model created and saved.")
 
-
         # Make predictions of test data essays
+        tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
         predictor = TextClassificationPipeline(
             model = model,
-            tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
+            tokenizer = tokenizer, #AutoTokenizer.from_pretrained("distilbert-base-cased"),
             top_k=1,
-            device = torch.device("cuda:0")# if torch.cuda.is_available()\
-                    #else torch.device("cpu")
+            device = torch.device("cuda:0") if torch.cuda.is_available()\
+                    else torch.device("cpu")
             )
+
+        #def tokenize_function(example):
+        #    return tokenizer(essay["text"], truncation=True)
         
-        for essay in dataset["test"]:
-            essay_id = essay["idx"]
-            expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
+        expected_scores = [out[0][0]["label"][6:] for out in predictor(
+            KeyDataset(dataset, "text"), batch_size=8, truncation=True)]
+        true_scores = [int(label) for label in dataset["test"]["labels"]]
+        essay_ids = [int(idx) for idx in dataset["test"]["idx"]]
+        for i in range(len(expected_scores)):
+            current = (essay_ids[i], expected_scores[i], true_scores[i])
+            predictions.append(current)
+
+        #for essay in dataset["test"]:
+        #    essay_id = essay["idx"]
+        #    expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
             # predictor(essay["text"]):
             # [[{'label': 'LABEL1', 'score': 0.95}]]
-            true_score = essay["labels"]
-            current = (essay_id, expected_score, true_score)
-            predictions.append(current)
+        #    true_score = essay["labels"]
+        #    current = (essay_id, expected_score, true_score)
+        #    predictions.append(current)
         print("Fold " + str(fold) + " finished.")
 
     predictions.sort()
@@ -84,6 +107,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
 
             
 def analyze_predictions(df):
+    """Returns accuracy and cohen kappa for predictions
+    """
     correct = 0
     total = len(df)
     for index, row in df.iterrows():
@@ -98,5 +123,4 @@ def analyze_predictions(df):
     return (accuracy, kappa)
             
 if __name__ == '__main__':
-    # Run fold_train from command line
-    train()
+    main()

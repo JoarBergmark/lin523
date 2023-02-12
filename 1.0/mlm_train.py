@@ -11,9 +11,12 @@ def mlm_train(checkpoint="distilbert-base-cased",
         loadpath="../data/datasets/all_essays.data",
         savepath="../models/essay_mlm.model",
         epochs=5):
-    """
+    """Trains a distilbert model for MLM using all essays
     Args:
-        
+        checkpoint: name for pretrained base model
+        loadpath: directory for dataset of all essays
+        savepath: path to save model
+        epochs: number of epochs for training
     """
     model = AutoModelForMaskedLM.from_pretrained(checkpoint)
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
@@ -61,7 +64,6 @@ def mlm_train(checkpoint="distilbert-base-cased",
     def whole_word_masking_data_collator(features, wwm_probability=0.2):
         """Data collator for whole word masking MLM.
         Args:
-            features:
             wwm_probability: share of words to be masked (default 20%)
         """
         for feature in features:
