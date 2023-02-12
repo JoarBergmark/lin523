@@ -90,12 +90,12 @@ def analyze_predictions(df):
     print(df)
     quit()
     for index, row in df.iterrows():
-        if row["prediction"] == row["true_result"]:
+        if row["prediction"] == row["true_score"]:
             correct += 1
     accuracy = correct / total
 
     kappa = sklearn.metrics.cohen_kappa_score(
-            df[["true_result"]],
+            df[["true_score"]],
             df[["prediction"]]
             )
     return (accuracy, kappa)
