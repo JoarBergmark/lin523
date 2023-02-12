@@ -29,7 +29,6 @@ class trainer(object):
         tokenized_datasets = self.dataset.map(self.tokenize_function,
                 batched=True
                 )
-        test_data = self.dataset["test"]
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
         tokenized_datasets = tokenized_datasets.remove_columns(["text", "idx"])
         tokenized_datasets.set_format("torch")
@@ -43,10 +42,6 @@ class trainer(object):
                 batch_size=self.batch_size, 
                 collate_fn=data_collator
                 )
-
-        # batch structure:
-        # {'labels': torch.Size([8]), 'input_ids': torch.Size([8, 247]),
-        # 'attention_mask': torch.Size([8, 247])}
 
         model = AutoModelForSequenceClassification.from_pretrained(
             self.model_save,

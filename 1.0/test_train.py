@@ -43,7 +43,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             dataset_builder(set_no)
             dataset = load_from_disk(filename)
             print("Dataset created and saved.")
-        
+
         m_file = savepath + "set" + str(set_no) + "/fold" + str(fold) + ".model"
         if os.path.exists(m_file):
             model = AutoModelForSequenceClassification.from_pretrained(m_file)
@@ -53,6 +53,9 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
                     batch_size=batch_size)
             model = model_trainer.train()
             print("Model created and saved.")
+
+        print("Not crashed yet")
+        quit()
 
         # Make predictions of test data essays
         predictor = TextClassificationPipeline(
