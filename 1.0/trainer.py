@@ -52,7 +52,10 @@ class trainer(object):
             self.model_save,
             num_labels=(self.dataset["train"].features["labels"].num_classes)
             )
-        
+        gc.collect()
+        torch.cuda.empty_cache()
+        model.to(self.device)
+
 
         optimizer = AdamW(model.parameters(), lr=5e-5)
         #optimizer = torch.optim.AdamW(model.parameters)
@@ -65,10 +68,7 @@ class trainer(object):
                 num_training_steps=num_training_steps
                 )
         print("print(num_training_steps): " + str(num_training_steps))
-        gc.collect()
-        torch.cuda.empty_cache()
 
-        model.to(self.device)
         progress_bar = tqdm(range(num_training_steps))
         print("Training start:")
         # Set model to training mode
