@@ -27,7 +27,7 @@ class trainer(object):
 
     def train(self):
         tokenized_datasets = self.dataset.map(self.tokenize_function,
-                batched=True, truncation=True
+                batched=True
                 )
         data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
         tokenized_datasets = tokenized_datasets.remove_columns(["text", "idx"])
