@@ -50,7 +50,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             print("Model loaded from disk.")
         else:
             model_trainer = trainer(dataset, m_file, epochs=epochs,
-                    model_save=filename, batch_size=batch_size)
+                    batch_size=batch_size)
             model = model_trainer.train()
             print("Model created and saved.")
 
