@@ -9,10 +9,12 @@ import gc
 class trainer(object):
     """Trainer class for model initiation and training.
     """
-    def __init__(self, dataset, savepath, checkpoint="distilbert-base-cased", epochs=3):
+    def __init__(self, dataset, savepath, model_save="../models/essay_mlm.model",
+            checkpoint="distilbert-base-cased", epochs=3):
         self.dataset = dataset
+        self.model_save = model_save
         self.checkpoint = checkpoint
-        self.tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+        self.tokenizer = AutoTokenizer.from_pretrained("checkpoint")
         self.epochs = epochs
         self.device = torch.device("cuda") if torch.cuda.is_available()\
                 else torch.device("cpu")
@@ -44,7 +46,7 @@ class trainer(object):
         # 'attention_mask': torch.Size([8, 247])}
 
         model = AutoModelForSequenceClassification.from_pretrained(
-            self.checkpoint,
+            self.model_save,
             num_labels=(self.dataset["train"].features["labels"].num_classes)
             )
         
