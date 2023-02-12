@@ -14,7 +14,7 @@ class trainer(object):
         self.dataset = dataset
         self.model_save = model_save
         self.checkpoint = checkpoint
-        self.tokenizer = AutoTokenizer.from_pretrained("checkpoint")
+        self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         self.epochs = epochs
         self.device = torch.device("cuda") if torch.cuda.is_available()\
                 else torch.device("cpu")
