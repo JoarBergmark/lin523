@@ -64,8 +64,9 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
             # predictor(essay["text"]):
             # [[{'label': 'LABEL1', 'score': 0.95}]]
-            true_score = essay["labels"]  
-            predictions.append(tuple(essay_id, expected_score, true_score))
+            true_score = essay["labels"]
+            current = (essay_id, expected_score, true_score)
+            predictions.append(current)
 
     predictions.sort()
     df = pd.DataFrame(predictions, columns=["essay_id", "prediction",
