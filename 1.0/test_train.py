@@ -53,7 +53,8 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
             top_k=1,
-            device = torch.device("cuda:0") if torch.cuda.is_available()
+            device = torch.device("cuda:0") if torch.cuda.is_available()\
+                    else torch.device("cpu")
             )
         #for out in predictor(KeyDataset(dataset["test"], "text"),batch_size=8):
             
