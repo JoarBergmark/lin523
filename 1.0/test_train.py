@@ -13,7 +13,7 @@ def train(loadpath="../data/datasets/", epochs=5,
         savepath="../models/set"):
     """
     """
-    sets = [3,4,5,6,7] # Only using sets 3-7 since they fit within model size
+    sets = [5,6,7] # Only using sets 3-7 since they fit within model size
     for essay_set in sets:
         model_savepath = savepath + str(essay_set) + "/"
         train_folds(essay_set, loadpath=loadpath, epochs=epochs,
@@ -56,8 +56,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
             device = torch.device("cuda:0") if torch.cuda.is_available()\
                     else torch.device("cpu")
             )
-        #for out in predictor(KeyDataset(dataset["test"], "text"),batch_size=8):
-            
+        
         for essay in dataset["test"]:
             essay_id = essay["idx"]
             expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
@@ -79,7 +78,7 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
     accuracy, kappa = analyze_predictions(df)
     with open(result_file, "w") as file:
         file.write("Set: " + str(set_no) + "\n")
-        file.write("Accuracy: " + str(accuracy))
+        file.write("Accuracy: " + str(accuracy) + "\n")
         file.write("Kappa: " + str(kappa))
     print("results saved to: " + result_file)
 
