@@ -51,8 +51,11 @@ def train_folds(set_no, folds=[0,1,2,3,4], loadpath="../data/datasets/",
         predictor = TextClassificationPipeline(
             model = model,
             tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased"),
-            top_k=1
-            ).to("cuda")
+            top_k=1,
+            device="cuda",
+            )
+        #for out in predictor(KeyDataset(dataset["test"], "text"), batch_size=8)
+            
         for essay in dataset["test"]:
             essay_id = essay["idx"]
             expected_score = int(predictor(essay["text"])[0][0]["label"][6:])
