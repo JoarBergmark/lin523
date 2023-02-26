@@ -148,6 +148,9 @@ def data_from_csv(set_no, filename="../data/training_set_rel3.tsv"):
         filename: path to .tsv-file
         set_no: the essay_set number
     """
+    # This is taking inspiration from the Huggingface Create Dataset tutorial:
+    # https://huggingface.co/course/chapter5/5?fw=pt
+
     # Read .csv to pandas dataframe
     df = pd.read_csv(filename, sep="\t", encoding="ISO-8859-1")
     df = df[df["essay_set"] == set_no]

@@ -7,6 +7,9 @@ from transformers import AdamW, get_scheduler
 from tqdm.auto import tqdm # For progress bar
 import evaluate
 import gc
+
+# This follows the HuggingFace pytorch trainer tutorial:
+# https://huggingface.co/course/chapter3/4?fw=pt
 class trainer(object):
     """Trainer class for model initiation and training.
     """

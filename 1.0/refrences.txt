@@ -1,0 +1,67 @@
+I followed the HuggingFace transformer tutorial for general information about
+transformer models and usage:
+https://huggingface.co/course/chapter0/1?fw=pt
+
+Code taken from the tutorial is documented bellow.
+
+The general structure of my project.
+Since I used a distilbert model as base I also changed any steps from the
+tutorial to either use distilbert-base-cased, or my pretrained
+essay-masked-language-model.
+
+________________________________________________________________________________
+    dataset_builder.py:
+Follows the processing data tutorial but no code is copied from the tutorial.
+https://huggingface.co/course/chapter3/2?fw=pt
+
+I also make use of the "creating dataset" tutorial, but since I'm working with a
+different dataset no large pieces of code is copied.
+https://huggingface.co/course/chapter5/5?fw=pt
+
+For the dataset_builder and create_folds functions I used the documentation for
+splitting datasets from the datasets documentation:
+https://huggingface.co/docs/datasets/v2.8.0/en/package_reference/main_classes#datasets.Dataset.train_test_split
+
+I extract the relevant collumns from the .csv file using pandas, following
+pandas ducumentation.
+
+For the data_from_csv function I used the datasets ducumentation as well as the
+ClassLabel class:
+https://huggingface.co/docs/datasets/v2.6.1/en/package_reference/main_classes#datasets.ClassLabel
+
+This is used in later stages to retrieve information about the "label" of the
+essays, which is my case is the essay grade.
+
+The dataset_unique_chars and replace_characters functions I made from scratch to
+avoid "wierd" character encodings before generating the datasets.
+
+________________________________________________________________________________
+    main.py:
+This is made from scratch, I followed the documentation from:
+https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/pipelines#transformers.TextClassificationPipeline
+for the evaluating the test split of each dataset.
+
+________________________________________________________________________________
+    mlm_train.py:
+Most of the code here is copied from the "Fine-tuning a masked language model"
+tutorial:
+https://huggingface.co/course/chapter7/3?fw=pt
+I changed the collumn names to match my dataset.
+
+________________________________________________________________________________
+    trainer.py:
+Most of the code here follows the "A full training" part of the Fine-Tuning
+tutorial:
+https://huggingface.co/course/chapter3/4?fw=pt
+
+I changed the code from the tutorial to create my own trainer object.
+Unfortunatly I found that using the same trainer object for multiple models and
+datasets caused some memory overflow so I had to make a new trainer object for
+each model.
+
+Some collumn names were changed from the original code to match my dataset, and
+I imported a garbage collector to clean up some of the cuda memory.
+I also followed the evaluate documentation for the metrics.
+https://huggingface.co/docs/datasets/metrics
+________________________________________________________________________________
+
